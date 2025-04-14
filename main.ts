@@ -27,7 +27,6 @@ export default class YouTrackPlugin extends Plugin {
 		this.addCommand({
 			id: 'fetch-youtrack-issue',
 			name: 'Fetch YouTrack Issue',
-			hotkeys: [{ modifiers: ['Mod', 'Shift'], key: 'y' }], // Default hotkey Ctrl+Shift+Y or Cmd+Shift+Y
 			callback: () => {
 				// Open modal to input issue ID
 				new YouTrackIssueModal(this.app, this).open();
@@ -67,7 +66,6 @@ export default class YouTrackPlugin extends Plugin {
 		}
 		
 		try {
-			console.log(`Fetching issue from YouTrack: ${apiUrl}`);
 			const response = await requestUrl({
 				url: apiUrl,
 				method: 'GET',
@@ -104,8 +102,8 @@ export default class YouTrackPlugin extends Plugin {
 		const fileName = `${folderPath ? folderPath + '/' : ''}${issueId}.md`;
 		
 		// Parse issue data
-		let issueTitle = issueData.summary;
-		let issueDescription = issueData.description || '';
+		const issueTitle = issueData.summary;
+		const issueDescription = issueData.description || '';
 		
 		// Construct issue URL
 		const issueUrl = `${this.settings.youtrackUrl}/issue/${issueId}`;
@@ -140,18 +138,6 @@ class YouTrackIssueModal extends Modal {
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
 		this.plugin = plugin;
-		
-		// Try to get issue ID from clipboard
-		navigator.clipboard.readText().then(text => {
-			// Check if text matches typical YouTrack issue ID pattern (e.g., ABC-123)
-			const issueIdPattern = /^[A-Z]+-\d+$/;
-			if (issueIdPattern.test(text.trim())) {
-				this.issueId = text.trim();
-			}
-		}).catch(err => {
-			// Silently ignore clipboard access errors
-			console.log("Couldn't access clipboard:", err);
-		});
 	}
 
 	onOpen() {
@@ -251,8 +237,6 @@ class YouTrackSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'YouTrack Plugin Settings' });
-
 		new Setting(containerEl)
 			.setName('YouTrack URL')
 			.setDesc('URL of your YouTrack installation (e.g., https://youtrack.jetbrains.com)')
@@ -305,11 +289,5 @@ class YouTrackSettingTab extends PluginSettingTab {
 						window.open(helpUrl, '_blank');
 					}));
 		}
-		
-		containerEl.createEl('h3', { text: 'Keyboard Shortcut' });
-		containerEl.createEl('p', { 
-			text: 'The default keyboard shortcut is Ctrl+Shift+Y (or Cmd+Shift+Y on Mac). You can change this in Obsidian Settings → Hotkeys → search for "Fetch YouTrack Issue".',
-			cls: 'setting-item-description' 
-		});
 	}
 }
