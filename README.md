@@ -30,9 +30,12 @@ This plugin allows you to quickly fetch YouTrack issues and create notes from th
 
 1. Set up your YouTrack instance URL in plugin settings
 2. Configure API token if required for your YouTrack instance
-3. Use the keyboard shortcut (Ctrl+Shift+Y / Cmd+Shift+Y) or click the clipboard icon in the ribbon
-4. Enter the issue ID (or it will attempt to get it from clipboard)
+  ![plugin settings](images/settings.png "Plugin Settings")
+3. Use the keyboard shortcut or click the clipboard icon in the ribbon
+  ![fetch issue window](images/modal.png "Fetch Issue Window")
+4. Enter the issue ID
 5. Click "Fetch Issue" to create a note based on the issue data
+  ![fetched issue](images/fetched.png "Fetched Issue")
 
 ## Note Format
 
