@@ -1,11 +1,11 @@
 {
 	"id": "youtrack-fetcher",
 	"name": "YouTrack Fetcher",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": "Forketyfork",
 	"main": "main.js",
 	"minAppVersion": "0.15.0",
 	"description": "Fetches YouTrack issues into notes.",
 	"authorUrl": "https://github.com/forketyfork",
 	"isDesktopOnly": false
-  }
+}
