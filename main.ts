@@ -162,7 +162,7 @@ class YouTrackIssueModal extends Modal {
 		
 		// Create loading indicator (hidden by default)
 		this.loadingIndicator = contentEl.createEl('div', { cls: 'youtrack-loading', text: 'Fetching issue...' });
-		this.loadingIndicator.style.display = 'none';
+		this.loadingIndicator.classList.add('visible');
 
 		// Focus the input field and select all text
 		setTimeout(() => {
@@ -192,7 +192,7 @@ class YouTrackIssueModal extends Modal {
 			}
 
 			// Show loading indicator
-			this.loadingIndicator.style.display = 'block';
+			this.loadingIndicator.classList.add('visible');
 			this.statusEl.setText('');
 			
 			try {
@@ -201,7 +201,7 @@ class YouTrackIssueModal extends Modal {
 				this.close();
 			} catch (error) {
 				// Hide loading indicator
-				this.loadingIndicator.style.display = 'none';
+				this.loadingIndicator.classList.remove('visible');
 				
 				// Show error message
 				this.statusEl.setText(`Error: ${error.message}`);

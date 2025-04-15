@@ -1,45 +1,50 @@
 /* YouTrack modal styling */
 .modal-button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.modal-button-container button {
+  margin-left: 0.5rem;
+}
+
+.error-message {
+  color: var(--text-error);
+  margin-top: 0.5rem;
+}
+
+.youtrack-status {
+  min-height: 1.5em;
+  margin-top: 0.5rem;
+}
+
+.youtrack-loading {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  display: none;
+}
+
+.youtrack-loading.visible {
+  display: block;
+}
+
+.youtrack-loading::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5em;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: youtrack-spinner 0.75s linear infinite;
+}
+
+@keyframes youtrack-spinner {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .modal-button-container button {
-    margin-left: 0.5rem;
-  }
-  
-  .error-message {
-    color: #ff5555;
-    margin-top: 0.5rem;
-  }
-  
-  .youtrack-status {
-    min-height: 1.5em;
-    margin-top: 0.5rem;
-  }
-  
-  .youtrack-loading {
-    display: flex;
-    align-items: center;
-    margin-top: 0.5rem;
-    color: var(--text-muted);
-  }
-  
-  .youtrack-loading::before {
-    content: "";
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    margin-right: 0.5em;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-    border-right-color: transparent;
-    animation: youtrack-spinner 0.75s linear infinite;
-  }
-  
-  @keyframes youtrack-spinner {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}

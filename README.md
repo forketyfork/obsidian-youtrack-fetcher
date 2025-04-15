@@ -5,7 +5,7 @@ This plugin allows you to quickly fetch YouTrack issues and create notes from th
 ## Features
 
 - Fetch YouTrack issues by ID and create structured notes
-- Easy access via keyboard shortcut (Ctrl+Shift+Y / Cmd+Shift+Y)
+- Easy access via keyboard shortcut
 - API token authentication support
 - Configurable folder for storing issue notes
 
