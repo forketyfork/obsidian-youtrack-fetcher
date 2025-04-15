@@ -19,6 +19,12 @@ jobs:
         run: |
           yarn install
           yarn build
+      - name: Create plugin archives
+        run: |
+          mkdir -p obsidian-youtrack-fetcher
+          cp main.js manifest.json styles.css obsidian-youtrack-fetcher/
+          zip -r obsidian-youtrack-fetcher.zip obsidian-youtrack-fetcher/
+          tar -czf obsidian-youtrack-fetcher.tar.gz obsidian-youtrack-fetcher/
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,4 +34,4 @@ jobs:
           gh release create "$tag" \
             --title="$tag" \
             --draft \
-            main.js manifest.json styles.css
+            main.js manifest.json styles.css obsidian-youtrack-fetcher.zip obsidian-youtrack-fetcher.tar.gz
