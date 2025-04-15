@@ -65,6 +65,28 @@ URL: [Issue URL]
 - If you have trouble authenticating, make sure your API token has proper permissions
 - For self-hosted instances, check that the REST API is accessible
 
+## Development
+
+Run the development build with change watch:
+```shell
+yarn build
+```
+
+Run the production build:
+```shell
+yarn build --production
+```
+
+Bump the version in `package.json` and `manifest.json` and add a tag:
+```shell
+npm version patch # or minor, or major
+```
+
+Publish a new release from the added tag:
+```shell
+git push --tags
+```
+
 ## License
 
 This plugin is licensed under the MIT License.
