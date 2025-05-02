@@ -1,11 +1,12 @@
 {
 	"name": "obsidian-youtrack-fetcher",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"description": "Obsidian plugin to fetch YouTrack issues into notes.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"typecheck": "tsc -noEmit -skipLibCheck",
+		"build": "yarn typecheck && tsc -noEmit -skipLibCheck && node esbuild.config.mjs --production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
 		"build:css": "csso styles.src.css --output styles.css"
 	},
