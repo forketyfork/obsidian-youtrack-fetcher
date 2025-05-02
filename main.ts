@@ -40,7 +40,7 @@ export default class YouTrackPlugin extends Plugin {
 		// Add command to fetch YouTrack issue
 		this.addCommand({
 			id: "fetch-youtrack-issue",
-			name: "Fetch YouTrack Issue",
+			name: "Fetch YouTrack issue",
 			callback: () => {
 				// Open modal to input issue ID
 				new YouTrackIssueModal(this.app, this).open();
@@ -48,7 +48,7 @@ export default class YouTrackPlugin extends Plugin {
 		});
 
 		// Add ribbon icon
-		this.addRibbonIcon("clipboard-list", "Fetch YouTrack Issue", () => {
+		this.addRibbonIcon("clipboard-list", "Fetch YouTrack issue", () => {
 			new YouTrackIssueModal(this.app, this).open();
 		});
 	}
@@ -183,7 +183,7 @@ class YouTrackIssueModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.createEl("h2", { text: "Fetch YouTrack Issue" });
+		contentEl.createEl("h2", { text: "Fetch YouTrack issue" });
 
 		// Create input field for issue ID
 		const inputContainer = contentEl.createDiv();
@@ -215,7 +215,7 @@ class YouTrackIssueModal extends Modal {
 
 		// Create buttons container
 		const buttonsContainer = contentEl.createDiv({
-			cls: "modal-button-container",
+			cls: "youtrack-modal-button-container",
 		});
 
 		// Add cancel button
@@ -225,7 +225,7 @@ class YouTrackIssueModal extends Modal {
 
 		// Add fetch button
 		const fetchButton = buttonsContainer.createEl("button", {
-			text: "Fetch Issue",
+			text: "Fetch issue",
 			cls: "mod-cta",
 		});
 
@@ -307,7 +307,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Notes Folder")
+			.setName("Notes folder")
 			.setDesc("Folder to store YouTrack issue notes (leave empty for vault root)")
 			.addText(text =>
 				text
@@ -320,7 +320,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Note Template")
+			.setName("Note template")
 			.setDesc(
 				"Path to a template file in your vault. The template can contain placeholders: ${id}, ${title}, ${url}, ${description} (leave empty for default template)"
 			)
@@ -335,7 +335,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Use API Token Authentication")
+			.setName("Use API token authentication")
 			.setDesc("Enable to use a permanent API token for authentication")
 			.addToggle(toggle =>
 				toggle.setValue(this.plugin.settings.useApiToken).onChange(async value => {
@@ -347,7 +347,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.useApiToken) {
 			new Setting(containerEl)
-				.setName("API Token")
+				.setName("API token")
 				.setDesc("Permanent API token for YouTrack authentication")
 				.addText(text =>
 					text

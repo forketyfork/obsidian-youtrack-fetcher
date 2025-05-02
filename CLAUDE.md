@@ -29,3 +29,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Avoid unnecessary logging to the console, no debug messages, only errors
 - Use consistent indentation (tabs) and spacing
 - Class methods order: lifecycle methods first, then functionality
+- Any text in UI elements should use "Sentence case" instead of "Title Case"

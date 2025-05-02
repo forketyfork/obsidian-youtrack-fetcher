@@ -1,11 +1,11 @@
 /* YouTrack modal styling */
-.modal-button-container {
+.youtrack-modal-button-container {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 1rem;
 }
 
-.modal-button-container button {
+.youtrack-modal-button-container button {
 	margin-left: 0.5rem;
 }
 

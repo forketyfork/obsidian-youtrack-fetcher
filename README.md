@@ -1,6 +1,6 @@
-# Obsidian YouTrack Fetcher
+# YouTrack Fetcher
 
-This plugin allows you to quickly fetch YouTrack issues and create notes from them in your Obsidian vault.
+This Obsidian plugin allows you to quickly fetch YouTrack issues and create notes from them in your Obsidian vault.
 
 ## Features
 
