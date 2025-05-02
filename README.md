@@ -8,6 +8,7 @@ This plugin allows you to quickly fetch YouTrack issues and create notes from th
 - Easy access via keyboard shortcut
 - API token authentication support
 - Configurable folder for storing issue notes
+- Configurable note template
 
 ## Installation
 
@@ -30,29 +31,25 @@ This plugin allows you to quickly fetch YouTrack issues and create notes from th
 
 1. Set up your YouTrack instance URL in plugin settings
 2. Configure API token if required for your YouTrack instance
-  ![plugin settings](images/settings.png "Plugin Settings")
+   ![plugin settings](images/settings.png "Plugin Settings")
 3. Use the keyboard shortcut or click the clipboard icon in the ribbon
-  ![fetch issue window](images/modal.png "Fetch Issue Window")
+   ![fetch issue window](images/modal.png "Fetch Issue Window")
 4. Enter the issue ID
 5. Click "Fetch Issue" to create a note based on the issue data
-  ![fetched issue](images/fetched.png "Fetched Issue")
+   ![fetched issue](images/fetched.png "Fetched Issue")
 
 ## Note Format
 
-The plugin currently creates notes with the following format. A custom note template will be supported in later versions.
+The plugin creates notes with the following format. As an alternative, specify your own template in the plugin settings.
 
 ```markdown
-# [ISSUE-ID]: [Issue Title]
+# ${id}: ${title}
 
-URL: [Issue URL]
+URL: ${url}
 
 ## Description
 
-[Issue description]
-
-## Diary
-
-## TODO
+${description}
 ```
 
 ## Requirements
@@ -68,21 +65,31 @@ URL: [Issue URL]
 ## Development
 
 Run the development build with change watch:
+
 ```shell
 yarn build
 ```
 
+Run the TypeScript type check:
+
+```shell
+yarn typecheck
+```
+
 Run the production build:
+
 ```shell
 yarn build --production
 ```
 
 Bump the version in `package.json` and `manifest.json` and add a tag:
+
 ```shell
-npm version patch # or minor, or major
+yarn version
 ```
 
 Publish a new release from the added tag:
+
 ```shell
 git push --tags
 ```
