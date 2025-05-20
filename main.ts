@@ -16,6 +16,7 @@ interface YouTrackPluginSettings {
 	useApiToken: boolean;
 	notesFolder: string;
 	templatePath: string;
+	fields: string;
 }
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	useApiToken: false,
 	notesFolder: "YouTrack",
 	templatePath: "",
+	fields: "summary,description",
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -88,7 +90,16 @@ export default class YouTrackPlugin extends Plugin {
 		}
 
 		// Construct the API URL
-		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=idReadable,summary,description`;
+		const fieldList = this.settings.fields
+			? [
+					"idReadable",
+					...this.settings.fields
+						.split(",")
+						.map(f => f.trim())
+						.filter(Boolean),
+				]
+			: ["idReadable"];
+		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
 
 		const headers: Record<string, string> = {
 			Accept: "application/json",
@@ -136,22 +147,39 @@ export default class YouTrackPlugin extends Plugin {
 		// Create file name from issue ID
 		const fileName = `${folderPath ? folderPath + "/" : ""}${issueId}.md`;
 
-		// Parse issue data
-		const issueTitle = issueData.summary;
-		const issueDescription = issueData.description || "";
-
 		// Construct issue URL
 		const issueUrl = `${this.settings.youtrackUrl}/issue/${issueId}`;
 
 		// Try to read template file
 		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
 
+		// Build replacement map
+		const fieldList = this.settings.fields
+			? this.settings.fields
+					.split(",")
+					.map(f => f.trim())
+					.filter(Boolean)
+			: [];
+
+		const replacements: Record<string, string> = {
+			id: issueId,
+			title: issueData.summary,
+			url: issueUrl,
+		};
+
+		for (const field of fieldList) {
+			const value = field.split(".").reduce((obj: any, key) => (obj ? obj[key] : undefined), issueData);
+			if (value !== undefined && value !== null) {
+				replacements[field] = String(value);
+			}
+		}
+
+		if (issueData.description && !replacements.description) {
+			replacements.description = String(issueData.description);
+		}
+
 		// Create note content
-		let noteContent = template
-			.replace(/\${id}/g, issueId)
-			.replace(/\${title}/g, issueTitle)
-			.replace(/\${url}/g, issueUrl)
-			.replace(/\${description}/g, issueDescription);
+		const noteContent = template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
 
 		// Create file in Obsidian vault
 		try {
@@ -322,7 +350,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
-				"Path to a template file in your vault. The template can contain placeholders: ${id}, ${title}, ${url}, ${description} (leave empty for default template)"
+				"Path to a template file in your vault. Use ${id}, ${title}, ${url} or any field from 'Issue fields' as placeholders (leave empty for default template)"
 			)
 			.addText(text =>
 				text
@@ -330,6 +358,19 @@ class YouTrackSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.templatePath)
 					.onChange(async value => {
 						this.plugin.settings.templatePath = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Issue fields")
+			.setDesc("Comma-separated list of fields to fetch for each issue")
+			.addText(text =>
+				text
+					.setPlaceholder("summary,description")
+					.setValue(this.plugin.settings.fields)
+					.onChange(async value => {
+						this.plugin.settings.fields = value;
 						await this.plugin.saveSettings();
 					})
 			);
