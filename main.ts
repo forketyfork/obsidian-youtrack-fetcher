@@ -16,6 +16,7 @@ interface YouTrackPluginSettings {
 	useApiToken: boolean;
 	notesFolder: string;
 	templatePath: string;
+	fields: string;
 }
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	useApiToken: false,
 	notesFolder: "YouTrack",
 	templatePath: "",
+	fields: "summary,description",
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -88,7 +90,8 @@ export default class YouTrackPlugin extends Plugin {
 		}
 
 		// Construct the API URL
-		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=idReadable,summary,description`;
+		const fields = this.settings.fields ? `idReadable,${this.settings.fields}` : "idReadable";
+		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fields}`;
 
 		const headers: Record<string, string> = {
 			Accept: "application/json",
@@ -146,12 +149,22 @@ export default class YouTrackPlugin extends Plugin {
 		// Try to read template file
 		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
 
-		// Create note content
-		let noteContent = template
-			.replace(/\${id}/g, issueId)
-			.replace(/\${title}/g, issueTitle)
-			.replace(/\${url}/g, issueUrl)
-			.replace(/\${description}/g, issueDescription);
+		// Create note content with dynamic placeholder replacement
+		const placeholderRegex = /\$\{([^}]+)\}/g;
+		const placeholderMap: Record<string, string> = {
+			id: issueId,
+			title: issueTitle,
+			url: issueUrl,
+		};
+
+		let noteContent = template.replace(placeholderRegex, (_, key: string) => {
+			const field = key === "title" ? "summary" : key;
+			if (placeholderMap[key]) {
+				return placeholderMap[key];
+			}
+			const value = issueData[field];
+			return value != null ? String(value) : "";
+		});
 
 		// Create file in Obsidian vault
 		try {
@@ -322,7 +335,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
-				"Path to a template file in your vault. The template can contain placeholders: ${id}, ${title}, ${url}, ${description} (leave empty for default template)"
+				"Path to a template file in your vault. The template can contain placeholders like ${id}, ${title}, ${url} or any fetched field"
 			)
 			.addText(text =>
 				text
@@ -330,6 +343,19 @@ class YouTrackSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.templatePath)
 					.onChange(async value => {
 						this.plugin.settings.templatePath = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Issue fields")
+			.setDesc("Comma-separated list of fields to fetch for each issue")
+			.addText(text =>
+				text
+					.setPlaceholder("summary,description")
+					.setValue(this.plugin.settings.fields)
+					.onChange(async value => {
+						this.plugin.settings.fields = value;
 						await this.plugin.saveSettings();
 					})
 			);

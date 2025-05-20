@@ -9,6 +9,8 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 - API token authentication support
 - Configurable folder for storing issue notes
 - Configurable note template
+- Customizable list of issue fields to fetch
+- Use fetched fields in note templates via `${field}` placeholders
 
 ## Installation
 
@@ -41,6 +43,8 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 ## Note Format
 
 The plugin creates notes with the following format. As an alternative, specify your own template in the plugin settings.
+Templates can use placeholders like `${id}`, `${url}` or any field fetched from YouTrack.
+`${title}` maps to the issue `summary` field by default.
 
 ```markdown
 # ${id}: ${title}
