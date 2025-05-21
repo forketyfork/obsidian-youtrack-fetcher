@@ -174,7 +174,7 @@ export default class YouTrackPlugin extends Plugin {
 		// replace other fields specified in settings
 		for (const field of fieldList) {
 			const value = issueData[field];
-			if (value !== undefined && value !== null) {
+			if (value) {
 				replacements[field] = String(value);
 			}
 		}
