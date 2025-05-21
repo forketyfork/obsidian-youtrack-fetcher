@@ -167,7 +167,7 @@ export default class YouTrackPlugin extends Plugin {
 		};
 
 		// always add "title" field from "summary" for backward compatibility
-		if (issueData.summary && !replacements.title) {
+		if (issueData.summary) {
 			replacements.title = String(issueData.summary);
 		}
 
