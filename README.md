@@ -54,7 +54,9 @@ URL: ${url}
 ${description}
 ```
 
-Any field listed in **Issue fields** can be used as a placeholder with `${field}`.
+Any field listed in **Issue fields** setting can be used as a placeholder with `${field}`.
+
+The issue `summary` can also be used as a `${title}` placeholder.
 
 ## Requirements
 
