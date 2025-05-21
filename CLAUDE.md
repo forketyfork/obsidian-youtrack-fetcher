@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI agents when working with code in this repository.
 
 ## Build Commands
 
@@ -30,3 +30,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use consistent indentation (tabs) and spacing
 - Class methods order: lifecycle methods first, then functionality
 - Any text in UI elements should use "Sentence case" instead of "Title Case"
+- Avoid committing changes in `yarn.lock` if you didn't change the `package.json` file, reset the `yarn.lock` file instead
+- Avoid committing package-lock.json, since we use yarn; if this file is created as a result of your actions, remove it
