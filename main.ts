@@ -90,15 +90,8 @@ export default class YouTrackPlugin extends Plugin {
 		}
 
 		// Construct the API URL
-		const fieldList = this.settings.fields
-			? [
-					"idReadable",
-					...this.settings.fields
-						.split(",")
-						.map(f => f.trim())
-						.filter(Boolean),
-				]
-			: ["idReadable"];
+		const fieldList = this.parseFieldListFromSettings();
+
 		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
 
 		const headers: Record<string, string> = {
@@ -129,6 +122,17 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
+	// Helper function to parse field list
+	private parseFieldListFromSettings(): string[] {
+		return this.settings.fields
+			? this.settings.fields
+					.split(",")
+					.map(f => f.trim())
+					// include only truthy (non-empty) values
+					.filter(Boolean)
+			: [];
+	}
+
 	async createIssueNote(issueId: string, issueData: any) {
 		// Create folder if it doesn't exist
 		const folderPath = this.settings.notesFolder ? this.settings.notesFolder : "";
@@ -154,28 +158,25 @@ export default class YouTrackPlugin extends Plugin {
 		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
 
 		// Build replacement map
-		const fieldList = this.settings.fields
-			? this.settings.fields
-					.split(",")
-					.map(f => f.trim())
-					.filter(Boolean)
-			: [];
+		const fieldList = this.parseFieldListFromSettings();
 
+		// these fields are always replaced
 		const replacements: Record<string, string> = {
 			id: issueId,
-			title: issueData.summary,
 			url: issueUrl,
 		};
 
+		// always add "title" field from "summary" for backward compatibility
+		if (issueData.summary && !replacements.title) {
+			replacements.title = String(issueData.summary);
+		}
+
+		// replace other fields specified in settings
 		for (const field of fieldList) {
-			const value = field.split(".").reduce((obj: any, key) => (obj ? obj[key] : undefined), issueData);
+			const value = issueData[field];
 			if (value !== undefined && value !== null) {
 				replacements[field] = String(value);
 			}
-		}
-
-		if (issueData.description && !replacements.description) {
-			replacements.description = String(issueData.description);
 		}
 
 		// Create note content
@@ -373,6 +374,13 @@ class YouTrackSettingTab extends PluginSettingTab {
 						this.plugin.settings.fields = value;
 						await this.plugin.saveSettings();
 					})
+			)
+			.addExtraButton(button =>
+				button.setIcon("help").onClick(() => {
+					// Open YouTrack help page in browser
+					const helpUrl = "https://www.jetbrains.com/help/youtrack/devportal/api-entity-Issue.html";
+					window.open(helpUrl, "_blank");
+				})
 			);
 
 		new Setting(containerEl)
