@@ -12,52 +12,25 @@ describe("YouTrackPlugin Utils", () => {
 		};
 	});
 
-	describe("parseFieldListFromSettings", () => {
-		test("should handle empty fields string", () => {
-			plugin.settings = {
-				youtrackUrl: "",
-				apiToken: "",
-				useApiToken: false,
-				notesFolder: "",
-				templatePath: "",
-				fields: "",
-			};
+describe("parseFieldListFromTemplate", () => {
+       test("should return empty list for template without fields", () => {
+               const template = "# ${id}\nURL: ${url}";
+               const result = plugin.parseFieldListFromTemplate(template);
+               expect(result).toEqual([]);
+       });
 
-			const result = plugin.parseFieldListFromSettings();
+       test("should collect unique fields", () => {
+               const template = "${created} ${updated} ${created}";
+               const result = plugin.parseFieldListFromTemplate(template);
+               expect(result).toEqual(["created", "updated"]);
+       });
 
-			expect(result).toEqual([]);
-		});
-
-		test("should remove whitespace from fields", () => {
-			plugin.settings = {
-				youtrackUrl: "",
-				apiToken: "",
-				useApiToken: false,
-				notesFolder: "",
-				templatePath: "",
-				fields: "summary, description,  created  ,updated",
-			};
-
-			const result = plugin.parseFieldListFromSettings();
-
-			expect(result).toEqual(["summary", "description", "created", "updated"]);
-		});
-
-		test("should filter out empty fields", () => {
-			plugin.settings = {
-				youtrackUrl: "",
-				apiToken: "",
-				useApiToken: false,
-				notesFolder: "",
-				templatePath: "",
-				fields: "summary,,description, ,created",
-			};
-
-			const result = plugin.parseFieldListFromSettings();
-
-			expect(result).toEqual(["summary", "description", "created"]);
-		});
-	});
+       test("should map title to summary and ignore id and url", () => {
+               const template = "# ${id}: ${title} (${url})";
+               const result = plugin.parseFieldListFromTemplate(template);
+               expect(result).toEqual(["summary"]);
+       });
+});
 
 	describe("formatTimestamp", () => {
 		test("should format valid timestamp number", () => {

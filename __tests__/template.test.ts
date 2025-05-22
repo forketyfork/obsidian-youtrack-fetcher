@@ -14,14 +14,13 @@ describe("YouTrackPlugin Template Rendering", () => {
 
 	describe("renderTemplate", () => {
 		test("should render template with all issue fields", () => {
-			plugin.settings = {
-				youtrackUrl: "",
-				apiToken: "",
-				useApiToken: false,
-				notesFolder: "",
-				templatePath: "",
-				fields: "summary,description,created,updated,resolved",
-			};
+                       plugin.settings = {
+                               youtrackUrl: "",
+                               apiToken: "",
+                               useApiToken: false,
+                               notesFolder: "",
+                               templatePath: "",
+                       };
 
 			// Sample YouTrack issue data
 			const issueData = {

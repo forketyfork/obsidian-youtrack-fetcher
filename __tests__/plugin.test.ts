@@ -15,7 +15,6 @@ describe("YouTrackPlugin", () => {
 		expect(plugin.settings.apiToken).toBe("");
 		expect(plugin.settings.useApiToken).toBe(false);
 		expect(plugin.settings.notesFolder).toBe("YouTrack");
-		expect(plugin.settings.templatePath).toBe("");
-		expect(plugin.settings.fields).toBe("summary,description");
+               expect(plugin.settings.templatePath).toBe("");
 	});
 });

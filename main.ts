@@ -11,21 +11,19 @@ import {
 } from "obsidian";
 
 interface YouTrackPluginSettings {
-	youtrackUrl: string;
-	apiToken: string;
-	useApiToken: boolean;
-	notesFolder: string;
-	templatePath: string;
-	fields: string;
+       youtrackUrl: string;
+       apiToken: string;
+       useApiToken: boolean;
+       notesFolder: string;
+       templatePath: string;
 }
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	youtrackUrl: "https://youtrack.jetbrains.com",
 	apiToken: "",
-	useApiToken: false,
-	notesFolder: "YouTrack",
-	templatePath: "",
-	fields: "summary,description",
+        useApiToken: false,
+        notesFolder: "YouTrack",
+        templatePath: "",
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -100,8 +98,9 @@ export default class YouTrackPlugin extends Plugin {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
 
-		// Construct the API URL
-		const fieldList = this.parseFieldListFromSettings();
+		// Determine fields from the template
+		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
+		const fieldList = this.parseFieldListFromTemplate(template);
 
 		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
 
@@ -133,16 +132,24 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-	// Helper function to parse field list
-	parseFieldListFromSettings(): string[] {
-		return this.settings.fields
-			? this.settings.fields
-					.split(",")
-					.map(f => f.trim())
-					// include only truthy (non-empty) values
-					.filter(Boolean)
-			: [];
-	}
+       // Parse list of fields referenced in a template
+       parseFieldListFromTemplate(template: string): string[] {
+               const fields = new Set<string>();
+               const regex = /\$\{([^}]+)\}/g;
+               let match: RegExpExecArray | null;
+               while ((match = regex.exec(template)) !== null) {
+                       const field = match[1].trim();
+                       if (!field || field === "id" || field === "url") {
+                               continue;
+                       }
+                       if (field === "title") {
+                               fields.add("summary");
+                       } else {
+                               fields.add(field);
+                       }
+               }
+               return Array.from(fields);
+       }
 
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
@@ -156,9 +163,9 @@ export default class YouTrackPlugin extends Plugin {
 		});
 	}
 
-	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
+		renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
 		// Build replacement map
-		const fieldList = this.parseFieldListFromSettings();
+		const fieldList = this.parseFieldListFromTemplate(template);
 
 		// these fields are always replaced
 		const replacements: Record<string, string> = {
@@ -383,9 +390,9 @@ class YouTrackSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Note template")
-			.setDesc(
-				"Path to a template file in your vault. Use ${id}, ${title}, ${url} or any field from 'Issue fields' as placeholders (leave empty for default template)"
-			)
+.setDesc(
+"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template)"
+)
 			.addText(text =>
 				text
 					.setPlaceholder("Template path")
@@ -396,25 +403,6 @@ class YouTrackSettingTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
-			.setName("Issue fields")
-			.setDesc("Comma-separated list of fields to fetch for each issue")
-			.addText(text =>
-				text
-					.setPlaceholder("summary,description")
-					.setValue(this.plugin.settings.fields)
-					.onChange(async value => {
-						this.plugin.settings.fields = value;
-						await this.plugin.saveSettings();
-					})
-			)
-			.addExtraButton(button =>
-				button.setIcon("help").onClick(() => {
-					// Open YouTrack help page in browser
-					const helpUrl = "https://www.jetbrains.com/help/youtrack/devportal/api-entity-Issue.html";
-					window.open(helpUrl, "_blank");
-				})
-			);
 
 		new Setting(containerEl)
 			.setName("Use API token authentication")
