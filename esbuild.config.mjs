@@ -11,6 +11,7 @@ If you want to view the source, please visit the GitHub repository of this plugi
 `;
 
 const prod = process.argv.includes("--production");
+const watch = process.argv.includes("--watch");
 
 const sharedOptions = {
 	entryPoints: ["main.ts"],
@@ -45,12 +46,12 @@ const sharedOptions = {
 };
 
 async function buildJS() {
-	if (prod) {
-		await esbuild.build(sharedOptions);
-	} else {
+	if (watch) {
 		const context = await esbuild.context(sharedOptions);
-		await context.watch();
 		console.log("Watching for changes...");
+		await context.watch();
+	} else {
+		await esbuild.build(sharedOptions);
 	}
 }
 
@@ -64,10 +65,8 @@ function buildCSS() {
 async function main() {
 	if (prod) {
 		buildCSS();
-		await buildJS();
-	} else {
-		await buildJS(); // watch mode
 	}
+	await buildJS();
 }
 
 main().catch(err => {

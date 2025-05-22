@@ -15,4 +15,4 @@ jobs:
       - name: Build plugin
         run: |
           yarn install
-          yarn build --production
+          yarn build
