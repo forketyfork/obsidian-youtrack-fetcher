@@ -56,31 +56,17 @@ describe("YouTrackPlugin Utils", () => {
 
 	describe("formatTimestamp", () => {
 		test("should format valid timestamp number", () => {
-			// Mock Date.prototype.toLocaleString to return a predictable value
-			const originalToLocaleString = Date.prototype.toLocaleString;
-			Date.prototype.toLocaleString = jest.fn(() => "Jan 1, 2023, 12:00:00 PM");
-
 			const timestamp = 1672531200000; // Jan 1, 2023
 			const result = plugin.formatTimestamp(timestamp);
 
-			expect(result).toBe("Jan 1, 2023, 12:00:00 PM");
-
-			// Restore original method
-			Date.prototype.toLocaleString = originalToLocaleString;
+			expect(result).toBe("1/1/2023, 1:00:00 AM");
 		});
 
 		test("should format valid timestamp string", () => {
-			// Mock Date.prototype.toLocaleString to return a predictable value
-			const originalToLocaleString = Date.prototype.toLocaleString;
-			Date.prototype.toLocaleString = jest.fn(() => "Jan 1, 2023, 12:00:00 PM");
-
 			const timestamp = "2023-01-01T12:00:00.000Z";
 			const result = plugin.formatTimestamp(timestamp);
 
-			expect(result).toBe("Jan 1, 2023, 12:00:00 PM");
-
-			// Restore original method
-			Date.prototype.toLocaleString = originalToLocaleString;
+			expect(result).toBe("1/1/2023, 1:00:00 PM");
 		});
 
 		test("should return original value for invalid timestamp", () => {
