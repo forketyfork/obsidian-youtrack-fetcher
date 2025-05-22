@@ -5,6 +5,11 @@ describe("YouTrackPlugin Utils", () => {
 
 	beforeEach(() => {
 		plugin = new YouTrackPlugin({} as any, {} as any);
+		// Set fixed locale and time zone for stable tests
+		plugin.dateTimeOptions = {
+			locale: 'en-US',
+			timeZone: 'UTC'
+		};
 	});
 
 	describe("parseFieldListFromSettings", () => {
@@ -56,17 +61,17 @@ describe("YouTrackPlugin Utils", () => {
 
 	describe("formatTimestamp", () => {
 		test("should format valid timestamp number", () => {
-			const timestamp = 1672531200000; // Jan 1, 2023
+			const timestamp = 1672531200000; // Jan 1, 2023, 00:00:00 UTC
 			const result = plugin.formatTimestamp(timestamp);
 
-			expect(result).toBe("1/1/2023, 1:00:00 AM");
+			expect(result).toBe("1/1/2023, 12:00:00 AM");
 		});
 
 		test("should format valid timestamp string", () => {
 			const timestamp = "2023-01-01T12:00:00.000Z";
 			const result = plugin.formatTimestamp(timestamp);
 
-			expect(result).toBe("1/1/2023, 1:00:00 PM");
+			expect(result).toBe("1/1/2023, 12:00:00 PM");
 		});
 
 		test("should return original value for invalid timestamp", () => {

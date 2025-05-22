@@ -32,8 +32,17 @@ const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n
 
 const TIMESTAMP_FIELDS = new Set(["created", "updated", "resolved"]);
 
+interface DateTimeFormatOptions {
+	locale?: string;
+	timeZone?: string;
+}
+
 export default class YouTrackPlugin extends Plugin {
 	settings: YouTrackPluginSettings;
+	dateTimeOptions: DateTimeFormatOptions = {
+		locale: undefined, // Uses system locale by default
+		timeZone: undefined // Uses system time zone by default
+	};
 
 	async onload() {
 		await this.loadSettings();
@@ -137,7 +146,14 @@ export default class YouTrackPlugin extends Plugin {
 
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
-		return isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+		if (isNaN(date.getTime())) {
+			return String(value);
+		}
+		
+		const formatOptions = this.dateTimeOptions;
+		return date.toLocaleString(formatOptions.locale, {
+			timeZone: formatOptions.timeZone
+		});
 	}
 
 	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {

@@ -6,12 +6,14 @@ This file provides guidance to AI agents when working with code in this reposito
 
 - `yarn dev` - Development build
 - `yarn dev:watch` - Development build with watch mode
+- `yarn prod` - Production build without tests or type checking
 - `yarn typecheck` — TypeScript typecheck
 - `yarn format` - Format code with Prettier
 - `yarn test` - Run Jest tests
-- `yarn test:watch` - Run Jest tests in watch mode
+- `yarn test:dev` - Run development build and then tests
+- `yarn test:watch` - Run development build and then tests in watch mode
 - `yarn build` - Production build (includes tests, typecheck and formatting)
-- `yarn build:css` - Minify CSS
+- `yarn build:css` - Minify CSS with CSSO (from styles.src.css to styles.css)
 - `yarn version` - Bump version in manifest.json and versions.json
 
 ## Typescript & Testing
