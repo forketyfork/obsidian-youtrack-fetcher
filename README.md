@@ -75,7 +75,7 @@ The issue `summary` can also be used as a `${title}` placeholder.
 Run the development build with change watch:
 
 ```shell
-yarn build
+yarn dev:watch
 ```
 
 Run the TypeScript type check:
@@ -84,10 +84,22 @@ Run the TypeScript type check:
 yarn typecheck
 ```
 
-Run the production build:
+Run the tests:
 
 ```shell
-yarn build --production
+yarn test
+```
+
+Run the tests in watch mode:
+
+```shell
+yarn test:watch
+```
+
+Run the production build (includes tests, type checking, and formatting):
+
+```shell
+yarn build
 ```
 
 Bump the version in `package.json` and `manifest.json` and add a tag:

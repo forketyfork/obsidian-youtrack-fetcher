@@ -125,7 +125,7 @@ export default class YouTrackPlugin extends Plugin {
 	}
 
 	// Helper function to parse field list
-	private parseFieldListFromSettings(): string[] {
+	parseFieldListFromSettings(): string[] {
 		return this.settings.fields
 			? this.settings.fields
 					.split(",")
@@ -135,9 +135,41 @@ export default class YouTrackPlugin extends Plugin {
 			: [];
 	}
 
-	private formatTimestamp(value: unknown): string {
+	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
 		return isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+	}
+
+	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
+		// Build replacement map
+		const fieldList = this.parseFieldListFromSettings();
+
+		// these fields are always replaced
+		const replacements: Record<string, string> = {
+			id: issueId,
+			url: issueUrl,
+		};
+
+		// always add "title" field from "summary" for backward compatibility
+		if (issueData.summary) {
+			replacements.title = String(issueData.summary);
+		}
+
+		// replace other fields specified in settings
+		for (const field of fieldList) {
+			const value = issueData[field];
+			if (value) {
+				let formatted = String(value);
+				if (TIMESTAMP_FIELDS.has(field)) {
+					formatted = this.formatTimestamp(value);
+				}
+				replacements[field] = formatted;
+			}
+		}
+		console.log("Replacements:", replacements);
+		console.log("Template:", template);
+		console.log("Issue Data:", issueData);
+		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
 	}
 
 	async createIssueNote(issueId: string, issueData: any) {
@@ -164,34 +196,8 @@ export default class YouTrackPlugin extends Plugin {
 		// Try to read template file
 		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
 
-		// Build replacement map
-		const fieldList = this.parseFieldListFromSettings();
-
-		// these fields are always replaced
-		const replacements: Record<string, string> = {
-			id: issueId,
-			url: issueUrl,
-		};
-
-		// always add "title" field from "summary" for backward compatibility
-		if (issueData.summary) {
-			replacements.title = String(issueData.summary);
-		}
-
-		// replace other fields specified in settings
-		for (const field of fieldList) {
-			const value = issueData[field];
-			if (value) {
-				let formatted = String(value);
-				if (TIMESTAMP_FIELDS.has(field)) {
-					formatted = this.formatTimestamp(value);
-				}
-				replacements[field] = formatted;
-			}
-		}
-
 		// Create note content
-		const noteContent = template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
+		const noteContent = this.renderTemplate(template, issueId, issueUrl, issueData);
 
 		// Create file in Obsidian vault
 		try {

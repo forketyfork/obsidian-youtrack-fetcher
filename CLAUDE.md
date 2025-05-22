@@ -4,19 +4,25 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Build Commands
 
-- `yarn dev` - Development build with watch mode
+- `yarn dev` - Development build
+- `yarn dev:watch` - Development build with watch mode
 - `yarn typecheck` — TypeScript typecheck
 - `yarn format` - Format code with Prettier
-- `yarn build` - Production build (includes typecheck and formatting)
+- `yarn test` - Run Jest tests
+- `yarn test:watch` - Run Jest tests in watch mode
+- `yarn build` - Production build (includes tests, typecheck and formatting)
 - `yarn build:css` - Minify CSS
 - `yarn version` - Bump version in manifest.json and versions.json
 
-## Typescript & Linting
+## Typescript & Testing
 
 - Strict null checks required (strictNullChecks: true)
 - No implicit any values (noImplicitAny: true)
 - Run type check with `yarn typecheck`
 - ESLint is configured with typescript-eslint plugin
+- Testing is done with Jest (`yarn test`)
+- All tests are in the `__tests__` directory
+- Test files should end with `.test.ts`
 
 ## Code Style
 

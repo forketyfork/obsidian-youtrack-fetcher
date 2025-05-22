@@ -18,7 +18,7 @@ jobs:
       - name: Build plugin
         run: |
           yarn install
-          yarn build --production
+          yarn build
       - name: Create plugin archives
         run: |
           mkdir -p obsidian-youtrack-fetcher
