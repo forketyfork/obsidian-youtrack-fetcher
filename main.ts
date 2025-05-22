@@ -133,6 +133,11 @@ export default class YouTrackPlugin extends Plugin {
 			: [];
 	}
 
+	private formatTimestamp(value: unknown): string {
+		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
+		return isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+	}
+
 	async createIssueNote(issueId: string, issueData: any) {
 		// Create folder if it doesn't exist
 		const folderPath = this.settings.notesFolder ? this.settings.notesFolder : "";
@@ -175,7 +180,11 @@ export default class YouTrackPlugin extends Plugin {
 		for (const field of fieldList) {
 			const value = issueData[field];
 			if (value) {
-				replacements[field] = String(value);
+				let formatted = String(value);
+				if (field === "created" || field === "updated") {
+					formatted = this.formatTimestamp(value);
+				}
+				replacements[field] = formatted;
 			}
 		}
 
