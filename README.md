@@ -1,5 +1,7 @@
 # YouTrack Fetcher
 
+[![Build status](https://github.com/forketyfork/obsidian-youtrack-fetcher/actions/workflows/build.yml/badge.svg)](https://github.com/forketyfork/obsidian-youtrack-fetcher/actions/workflows/build.yml)
+
 This Obsidian plugin allows you to quickly fetch YouTrack issues and create notes from them in your Obsidian vault.
 
 ## Features
