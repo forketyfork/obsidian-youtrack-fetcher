@@ -30,6 +30,8 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
 
+const TIMESTAMP_FIELDS = new Set(["created", "updated", "resolved"]);
+
 export default class YouTrackPlugin extends Plugin {
 	settings: YouTrackPluginSettings;
 
@@ -181,7 +183,7 @@ export default class YouTrackPlugin extends Plugin {
 			const value = issueData[field];
 			if (value) {
 				let formatted = String(value);
-				if (field === "created" || field === "updated") {
+				if (TIMESTAMP_FIELDS.has(field)) {
 					formatted = this.formatTimestamp(value);
 				}
 				replacements[field] = formatted;
