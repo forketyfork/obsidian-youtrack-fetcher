@@ -135,22 +135,17 @@ export default class YouTrackPlugin extends Plugin {
 	// Parse list of fields referenced in a template
 	parseFieldListFromTemplate(template: string): string[] {
 		const fields = new Set<string>();
-		const regex = /\$\{([^}]+)\}/g;
-		let match: RegExpExecArray | null;
-		while ((match = regex.exec(template)) !== null) {
+		const matches = template.matchAll(/\$\{([^}]+)\}/g);
+
+		for (const match of matches) {
 			const field = match[1].trim();
-			if (!field || field === "id" || field === "url") {
-				continue;
-			}
-			if (field === "title") {
-				fields.add("summary");
-			} else {
-				fields.add(field);
-			}
+			if (!field || field === "id" || field === "url") continue;
+
+			fields.add(field === "title" ? "summary" : field);
 		}
+
 		return Array.from(fields);
 	}
-
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
 		if (isNaN(date.getTime())) {
