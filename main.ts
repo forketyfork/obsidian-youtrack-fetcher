@@ -11,19 +11,19 @@ import {
 } from "obsidian";
 
 interface YouTrackPluginSettings {
-       youtrackUrl: string;
-       apiToken: string;
-       useApiToken: boolean;
-       notesFolder: string;
-       templatePath: string;
+	youtrackUrl: string;
+	apiToken: string;
+	useApiToken: boolean;
+	notesFolder: string;
+	templatePath: string;
 }
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	youtrackUrl: "https://youtrack.jetbrains.com",
 	apiToken: "",
-        useApiToken: false,
-        notesFolder: "YouTrack",
-        templatePath: "",
+	useApiToken: false,
+	notesFolder: "YouTrack",
+	templatePath: "",
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -39,7 +39,7 @@ export default class YouTrackPlugin extends Plugin {
 	settings: YouTrackPluginSettings;
 	dateTimeOptions: DateTimeFormatOptions = {
 		locale: undefined, // Uses system locale by default
-		timeZone: undefined // Uses system time zone by default
+		timeZone: undefined, // Uses system time zone by default
 	};
 
 	async onload() {
@@ -132,38 +132,38 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-       // Parse list of fields referenced in a template
-       parseFieldListFromTemplate(template: string): string[] {
-               const fields = new Set<string>();
-               const regex = /\$\{([^}]+)\}/g;
-               let match: RegExpExecArray | null;
-               while ((match = regex.exec(template)) !== null) {
-                       const field = match[1].trim();
-                       if (!field || field === "id" || field === "url") {
-                               continue;
-                       }
-                       if (field === "title") {
-                               fields.add("summary");
-                       } else {
-                               fields.add(field);
-                       }
-               }
-               return Array.from(fields);
-       }
+	// Parse list of fields referenced in a template
+	parseFieldListFromTemplate(template: string): string[] {
+		const fields = new Set<string>();
+		const regex = /\$\{([^}]+)\}/g;
+		let match: RegExpExecArray | null;
+		while ((match = regex.exec(template)) !== null) {
+			const field = match[1].trim();
+			if (!field || field === "id" || field === "url") {
+				continue;
+			}
+			if (field === "title") {
+				fields.add("summary");
+			} else {
+				fields.add(field);
+			}
+		}
+		return Array.from(fields);
+	}
 
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
 		if (isNaN(date.getTime())) {
 			return String(value);
 		}
-		
+
 		const formatOptions = this.dateTimeOptions;
 		return date.toLocaleString(formatOptions.locale, {
-			timeZone: formatOptions.timeZone
+			timeZone: formatOptions.timeZone,
 		});
 	}
 
-		renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
+	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
 		// Build replacement map
 		const fieldList = this.parseFieldListFromTemplate(template);
 
@@ -189,9 +189,6 @@ export default class YouTrackPlugin extends Plugin {
 				replacements[field] = formatted;
 			}
 		}
-		console.log("Replacements:", replacements);
-		console.log("Template:", template);
-		console.log("Issue Data:", issueData);
 		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
 	}
 
@@ -390,9 +387,9 @@ class YouTrackSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Note template")
-.setDesc(
-"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template)"
-)
+			.setDesc(
+				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template)"
+			)
 			.addText(text =>
 				text
 					.setPlaceholder("Template path")
@@ -402,7 +399,6 @@ class YouTrackSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-
 
 		new Setting(containerEl)
 			.setName("Use API token authentication")

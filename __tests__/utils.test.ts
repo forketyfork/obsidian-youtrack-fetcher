@@ -7,30 +7,30 @@ describe("YouTrackPlugin Utils", () => {
 		plugin = new YouTrackPlugin({} as any, {} as any);
 		// Set fixed locale and time zone for stable tests
 		plugin.dateTimeOptions = {
-			locale: 'en-US',
-			timeZone: 'UTC'
+			locale: "en-US",
+			timeZone: "UTC",
 		};
 	});
 
-describe("parseFieldListFromTemplate", () => {
-       test("should return empty list for template without fields", () => {
-               const template = "# ${id}\nURL: ${url}";
-               const result = plugin.parseFieldListFromTemplate(template);
-               expect(result).toEqual([]);
-       });
+	describe("parseFieldListFromTemplate", () => {
+		test("should return empty list for template without fields", () => {
+			const template = "# ${id}\nURL: ${url}";
+			const result = plugin.parseFieldListFromTemplate(template);
+			expect(result).toEqual([]);
+		});
 
-       test("should collect unique fields", () => {
-               const template = "${created} ${updated} ${created}";
-               const result = plugin.parseFieldListFromTemplate(template);
-               expect(result).toEqual(["created", "updated"]);
-       });
+		test("should collect unique fields", () => {
+			const template = "${created} ${updated} ${created}";
+			const result = plugin.parseFieldListFromTemplate(template);
+			expect(result).toEqual(["created", "updated"]);
+		});
 
-       test("should map title to summary and ignore id and url", () => {
-               const template = "# ${id}: ${title} (${url})";
-               const result = plugin.parseFieldListFromTemplate(template);
-               expect(result).toEqual(["summary"]);
-       });
-});
+		test("should map title to summary and ignore id and url", () => {
+			const template = "# ${id}: ${title} (${url})";
+			const result = plugin.parseFieldListFromTemplate(template);
+			expect(result).toEqual(["summary"]);
+		});
+	});
 
 	describe("formatTimestamp", () => {
 		test("should format valid timestamp number", () => {

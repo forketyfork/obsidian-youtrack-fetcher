@@ -7,20 +7,20 @@ describe("YouTrackPlugin Template Rendering", () => {
 		plugin = new YouTrackPlugin({} as any, {} as any);
 		// Set fixed locale and time zone for stable tests
 		plugin.dateTimeOptions = {
-			locale: 'en-US',
-			timeZone: 'UTC'
+			locale: "en-US",
+			timeZone: "UTC",
 		};
 	});
 
 	describe("renderTemplate", () => {
 		test("should render template with all issue fields", () => {
-                       plugin.settings = {
-                               youtrackUrl: "",
-                               apiToken: "",
-                               useApiToken: false,
-                               notesFolder: "",
-                               templatePath: "",
-                       };
+			plugin.settings = {
+				youtrackUrl: "",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
 
 			// Sample YouTrack issue data
 			const issueData = {
