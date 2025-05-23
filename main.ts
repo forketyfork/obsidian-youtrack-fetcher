@@ -16,7 +16,6 @@ interface YouTrackPluginSettings {
 	useApiToken: boolean;
 	notesFolder: string;
 	templatePath: string;
-	fields: string;
 }
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
@@ -25,7 +24,6 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	useApiToken: false,
 	notesFolder: "YouTrack",
 	templatePath: "",
-	fields: "summary,description",
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -41,7 +39,7 @@ export default class YouTrackPlugin extends Plugin {
 	settings: YouTrackPluginSettings;
 	dateTimeOptions: DateTimeFormatOptions = {
 		locale: undefined, // Uses system locale by default
-		timeZone: undefined // Uses system time zone by default
+		timeZone: undefined, // Uses system time zone by default
 	};
 
 	async onload() {
@@ -100,8 +98,9 @@ export default class YouTrackPlugin extends Plugin {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
 
-		// Construct the API URL
-		const fieldList = this.parseFieldListFromSettings();
+		// Determine fields from the template
+		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
+		const fieldList = this.parseFieldListFromTemplate(template);
 
 		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
 
@@ -133,32 +132,35 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-	// Helper function to parse field list
-	parseFieldListFromSettings(): string[] {
-		return this.settings.fields
-			? this.settings.fields
-					.split(",")
-					.map(f => f.trim())
-					// include only truthy (non-empty) values
-					.filter(Boolean)
-			: [];
-	}
+	// Parse list of fields referenced in a template
+	parseFieldListFromTemplate(template: string): string[] {
+		const fields = new Set<string>();
+		const matches = template.matchAll(/\$\{([^}]+)\}/g);
 
+		for (const match of matches) {
+			const field = match[1].trim();
+			if (!field || field === "id" || field === "url") continue;
+
+			fields.add(field === "title" ? "summary" : field);
+		}
+
+		return Array.from(fields);
+	}
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
 		if (isNaN(date.getTime())) {
 			return String(value);
 		}
-		
+
 		const formatOptions = this.dateTimeOptions;
 		return date.toLocaleString(formatOptions.locale, {
-			timeZone: formatOptions.timeZone
+			timeZone: formatOptions.timeZone,
 		});
 	}
 
 	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
 		// Build replacement map
-		const fieldList = this.parseFieldListFromSettings();
+		const fieldList = this.parseFieldListFromTemplate(template);
 
 		// these fields are always replaced
 		const replacements: Record<string, string> = {
@@ -182,9 +184,6 @@ export default class YouTrackPlugin extends Plugin {
 				replacements[field] = formatted;
 			}
 		}
-		console.log("Replacements:", replacements);
-		console.log("Template:", template);
-		console.log("Issue Data:", issueData);
 		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
 	}
 
@@ -384,7 +383,7 @@ class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
-				"Path to a template file in your vault. Use ${id}, ${title}, ${url} or any field from 'Issue fields' as placeholders (leave empty for default template)"
+				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template)"
 			)
 			.addText(text =>
 				text
@@ -394,26 +393,6 @@ class YouTrackSettingTab extends PluginSettingTab {
 						this.plugin.settings.templatePath = value;
 						await this.plugin.saveSettings();
 					})
-			);
-
-		new Setting(containerEl)
-			.setName("Issue fields")
-			.setDesc("Comma-separated list of fields to fetch for each issue")
-			.addText(text =>
-				text
-					.setPlaceholder("summary,description")
-					.setValue(this.plugin.settings.fields)
-					.onChange(async value => {
-						this.plugin.settings.fields = value;
-						await this.plugin.saveSettings();
-					})
-			)
-			.addExtraButton(button =>
-				button.setIcon("help").onClick(() => {
-					// Open YouTrack help page in browser
-					const helpUrl = "https://www.jetbrains.com/help/youtrack/devportal/api-entity-Issue.html";
-					window.open(helpUrl, "_blank");
-				})
 			);
 
 		new Setting(containerEl)

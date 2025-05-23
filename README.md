@@ -12,7 +12,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 - Configurable folder for storing issue notes
 - Configurable note template
 - Use `${field}` placeholders in templates to insert values from fetched fields
-- Customizable list of issue fields to fetch
+- Fields to fetch are parsed from your template automatically
 
 ## Installation
 
@@ -56,7 +56,7 @@ URL: ${url}
 ${description}
 ```
 
-Any field listed in **Issue fields** setting can be used as a placeholder with `${field}`.
+Any field referenced in the template can be used as a placeholder with `${field}`.
 
 The issue `summary` can also be used as a `${title}` placeholder.
 
