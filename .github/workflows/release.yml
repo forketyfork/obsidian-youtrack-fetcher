@@ -19,6 +19,13 @@ jobs:
         run: |
           yarn install
           yarn build
+      - name: Fail if build modified files
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Build modified files. Commit the output of 'yarn build'."
+            git status --porcelain
+            exit 1
+          fi
       - name: Create plugin archives
         run: |
           mkdir -p obsidian-youtrack-fetcher
