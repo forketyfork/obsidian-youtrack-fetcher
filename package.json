@@ -13,9 +13,10 @@
 		"test:dev": "yarn dev && jest",
 		"test:watch": "yarn dev && jest --watch",
 		"build": "yarn typecheck && yarn format && yarn prod && yarn test",
-		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"build:css": "csso styles.src.css --output styles.css"
-	},
+                "version": "node version-bump.mjs && git add manifest.json versions.json",
+                "build:css": "csso styles.src.css --output styles.css",
+                "release": "yarn version && git push origin main && git push origin --tags"
+        },
 	"keywords": [
 		"obsidian",
 		"plugin",

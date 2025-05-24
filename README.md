@@ -102,16 +102,11 @@ Run the production build (includes tests, type checking, and formatting):
 yarn build
 ```
 
-Bump the version in `package.json` and `manifest.json` and add a tag:
+Bump the version in `package.json` and `manifest.json`, push the `main` branch,
+and publish a new tag:
 
 ```shell
-yarn version
-```
-
-Publish a new release from the added tag:
-
-```shell
-git push --tags
+yarn release
 ```
 
 ## License
