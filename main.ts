@@ -143,8 +143,30 @@ export default class YouTrackPlugin extends Plugin {
 
 			fields.add(field === "title" ? "summary" : field);
 		}
-
 		return Array.from(fields);
+	}
+
+	parseIssueId(input: string): string {
+		const trimmed = input.trim();
+		if (/^https?:\/\//i.test(trimmed)) {
+			const baseUrl = this.settings.youtrackUrl.replace(/\/$/, "");
+			let url: URL;
+			try {
+				url = new URL(trimmed);
+			} catch {
+				throw new Error("Invalid issue URL");
+			}
+			const base = new URL(baseUrl);
+			const basePath = base.pathname.replace(/\/$/, "");
+			if (url.origin !== base.origin || !url.pathname.startsWith(basePath + "/issue/")) {
+				throw new Error("Issue URL does not match settings");
+			}
+			let rest = url.pathname.substring((basePath + "/issue/").length);
+			rest = rest.split(/[/?#]/)[0];
+			if (!rest) throw new Error("Invalid issue URL");
+			return rest;
+		}
+		return trimmed;
 	}
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
@@ -249,7 +271,7 @@ class YouTrackIssueModal extends Modal {
 		// Create input field for issue ID
 		const inputContainer = contentEl.createDiv();
 		const input = new TextComponent(inputContainer)
-			.setPlaceholder("Issue ID (e.g., ABC-123)")
+			.setPlaceholder("Issue ID or URL")
 			.setValue(this.issueId || "")
 			.onChange(value => {
 				this.issueId = value;
@@ -292,7 +314,7 @@ class YouTrackIssueModal extends Modal {
 
 		const fetchIssue = async () => {
 			if (!this.issueId) {
-				this.statusEl.setText("Please enter an issue ID");
+				this.statusEl.setText("Please enter an issue ID or URL");
 				this.statusEl.addClass("error-message");
 				return;
 			}
@@ -310,13 +332,22 @@ class YouTrackIssueModal extends Modal {
 				}
 			}
 
+			let parsedId: string;
+			try {
+				parsedId = this.plugin.parseIssueId(this.issueId);
+			} catch (error) {
+				this.statusEl.setText(`Error: ${error.message}`);
+				this.statusEl.addClass("error-message");
+				return;
+			}
+
 			// Show loading indicator
 			this.loadingIndicator.classList.add("visible");
 			this.statusEl.setText("");
 
 			try {
-				const issueData = await this.plugin.fetchIssueData(this.issueId);
-				await this.plugin.createIssueNote(this.issueId, issueData);
+				const issueData = await this.plugin.fetchIssueData(parsedId);
+				await this.plugin.createIssueNote(parsedId, issueData);
 				this.close();
 			} catch (error) {
 				// Hide loading indicator
