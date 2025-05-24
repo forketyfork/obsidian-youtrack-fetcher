@@ -54,4 +54,30 @@ describe("YouTrackPlugin Utils", () => {
 			expect(result).toBe("not-a-date");
 		});
 	});
+
+	describe("parseIssueId", () => {
+		beforeEach(() => {
+			plugin.settings = {
+				youtrackUrl: "https://example.com",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+		});
+
+		test("returns input when id provided", () => {
+			const id = plugin.parseIssueId("ABC-1");
+			expect(id).toBe("ABC-1");
+		});
+
+		test("parses id from matching url", () => {
+			const id = plugin.parseIssueId("https://example.com/issue/ABC-2");
+			expect(id).toBe("ABC-2");
+		});
+
+		test("throws for mismatched url", () => {
+			expect(() => plugin.parseIssueId("https://other.com/issue/ABC-3")).toThrow();
+		});
+	});
 });
