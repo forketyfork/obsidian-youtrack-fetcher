@@ -240,6 +240,7 @@ class YouTrackIssueModal extends Modal {
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
 		this.plugin = plugin;
+		console.log("YouTrackIssueModal initialized");
 	}
 
 	onOpen() {
