@@ -93,7 +93,7 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-	async fetchIssueData(issueId: string): Promise<object> {
+	async fetchIssueData(issueId: string): Promise<unknown> {
 		if (!this.settings.youtrackUrl) {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
@@ -316,7 +316,7 @@ class YouTrackIssueModal extends Modal {
 
 			try {
 				const response: unknown = await this.plugin.fetchIssueData(this.issueId);
-				if (typeof response === 'object' && response !== null) {
+				if (typeof response === "object" && response !== null) {
 					const issueData = response as Record<string, unknown>;
 					await this.plugin.createIssueNote(this.issueId, issueData);
 				} else {
