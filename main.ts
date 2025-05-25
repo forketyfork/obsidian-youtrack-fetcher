@@ -146,6 +146,32 @@ export default class YouTrackPlugin extends Plugin {
 
 		return Array.from(fields);
 	}
+
+	parseIssueId(input: string): string | null {
+		const trimmed = input.trim();
+		if (!trimmed) return null;
+
+		let id = trimmed;
+
+		if (/^https?:\/\//i.test(trimmed)) {
+			try {
+				const inputUrl = new URL(trimmed);
+				const baseUrl = new URL(this.settings.youtrackUrl);
+				const basePath = baseUrl.pathname.replace(/\/$/, "");
+				const prefix = `${basePath}/issue/`;
+
+				if (inputUrl.origin !== baseUrl.origin || !inputUrl.pathname.startsWith(prefix)) {
+					return null;
+				}
+
+				id = inputUrl.pathname.substring(prefix.length).split("/")[0];
+			} catch {
+				return null;
+			}
+		}
+
+		return /^[A-Za-z]+-\d+$/.test(id) ? id : null;
+	}
 	formatTimestamp(value: unknown): string {
 		const date = typeof value === "number" ? new Date(value) : new Date(String(value));
 		if (isNaN(date.getTime())) {
@@ -249,7 +275,7 @@ class YouTrackIssueModal extends Modal {
 		// Create input field for issue ID
 		const inputContainer = contentEl.createDiv();
 		const input = new TextComponent(inputContainer)
-			.setPlaceholder("Issue ID (e.g., ABC-123)")
+			.setPlaceholder("Issue URL or ID (e.g., ABC-123)")
 			.setValue(this.issueId || "")
 			.onChange(value => {
 				this.issueId = value;
@@ -292,7 +318,14 @@ class YouTrackIssueModal extends Modal {
 
 		const fetchIssue = async () => {
 			if (!this.issueId) {
-				this.statusEl.setText("Please enter an issue ID");
+				this.statusEl.setText("Please enter an issue ID or URL");
+				this.statusEl.addClass("error-message");
+				return;
+			}
+
+			const parsedId = this.plugin.parseIssueId(this.issueId);
+			if (!parsedId) {
+				this.statusEl.setText("Invalid issue ID or URL (must match your YouTrack URL)");
 				this.statusEl.addClass("error-message");
 				return;
 			}
@@ -315,10 +348,10 @@ class YouTrackIssueModal extends Modal {
 			this.statusEl.setText("");
 
 			try {
-				const response: unknown = await this.plugin.fetchIssueData(this.issueId);
+				const response: unknown = await this.plugin.fetchIssueData(parsedId);
 				if (typeof response === "object" && response !== null) {
 					const issueData = response as Record<string, unknown>;
-					await this.plugin.createIssueNote(this.issueId, issueData);
+					await this.plugin.createIssueNote(parsedId, issueData);
 				} else {
 					throw new Error("Invalid response format from YouTrack API");
 				}

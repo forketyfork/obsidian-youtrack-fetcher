@@ -55,4 +55,34 @@ describe("YouTrackPlugin Utils", () => {
 			expect(result).toBe("not-a-date");
 		});
 	});
+
+	describe("parseIssueId", () => {
+		beforeEach(async () => {
+			await plugin.loadSettings();
+			plugin.settings.youtrackUrl = "https://youtrack.jetbrains.com";
+		});
+
+		test("should return ID when input is plain ID", () => {
+			expect(plugin.parseIssueId("ABC-1")).toBe("ABC-1");
+		});
+
+		test("should extract ID from matching URL", () => {
+			const url = "https://youtrack.jetbrains.com/issue/ABC-1";
+			expect(plugin.parseIssueId(url)).toBe("ABC-1");
+		});
+
+		test("should extract ID from URL with slug", () => {
+			const url = "https://youtrack.jetbrains.com/issue/RDO-3506/Typescript-basic-pages";
+			expect(plugin.parseIssueId(url)).toBe("RDO-3506");
+		});
+
+		test("should return null for mismatched URL", () => {
+			const url = "https://other.com/issue/ABC-1";
+			expect(plugin.parseIssueId(url)).toBeNull();
+		});
+
+		test("should return null for invalid ID format", () => {
+			expect(plugin.parseIssueId("ABC123")).toBeNull();
+		});
+	});
 });
