@@ -1,10 +1,11 @@
 import YouTrackPlugin from "../main";
+import { App, PluginManifest } from "obsidian";
 
 describe("YouTrackPlugin Template Rendering", () => {
 	let plugin: YouTrackPlugin;
 
 	beforeEach(() => {
-		plugin = new YouTrackPlugin({} as any, {} as any);
+		plugin = new YouTrackPlugin({} as App, {} as PluginManifest);
 		// Set fixed locale and time zone for stable tests
 		plugin.dateTimeOptions = {
 			locale: "en-US",

@@ -1,10 +1,11 @@
 import YouTrackPlugin from "../main";
+import { App, PluginManifest } from "obsidian";
 
 describe("YouTrackPlugin", () => {
 	let plugin: YouTrackPlugin;
 
 	beforeEach(() => {
-		plugin = new YouTrackPlugin({} as any, {} as any);
+		plugin = new YouTrackPlugin({} as App, {} as PluginManifest);
 	});
 
 	test("plugin loads with default settings", async () => {
