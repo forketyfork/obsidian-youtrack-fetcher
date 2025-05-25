@@ -6,7 +6,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 
 ## Features
 
-- Fetch YouTrack issues by ID and create structured notes
+- Fetch YouTrack issues by ID or URL and create structured notes
 - Easy access via keyboard shortcut
 - API token authentication support
 - Configurable folder for storing issue notes
@@ -38,7 +38,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
    ![plugin settings](images/settings.png "Plugin Settings")
 3. Use the keyboard shortcut or click the clipboard icon in the ribbon
    ![fetch issue window](images/modal.png "Fetch Issue Window")
-4. Enter the issue ID
+4. Enter the issue ID or paste the full issue URL
 5. Click "Fetch Issue" to create a note based on the issue data
    ![fetched issue](images/fetched.png "Fetched Issue")
 
@@ -82,6 +82,12 @@ Run the TypeScript type check:
 
 ```shell
 yarn typecheck
+```
+
+Run the linter:
+
+```shell
+yarn lint
 ```
 
 Run the tests:

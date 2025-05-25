@@ -9,6 +9,7 @@ This file provides guidance to AI agents when working with code in this reposito
 - `yarn prod` - Production build without tests or type checking
 - `yarn typecheck` — TypeScript typecheck
 - `yarn format` - Format code with Prettier
+- `yarn lint` - Check code style with ESLint
 - `yarn test` - Run Jest tests
 - `yarn test:dev` - Run development build and then tests
 - `yarn test:watch` - Run development build and then tests in watch mode
