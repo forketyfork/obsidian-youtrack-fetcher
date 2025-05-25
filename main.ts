@@ -93,7 +93,7 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-	async fetchIssueData(issueId: string): Promise<any> {
+	async fetchIssueData(issueId: string): Promise<unknown> {
 		if (!this.settings.youtrackUrl) {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
@@ -158,7 +158,7 @@ export default class YouTrackPlugin extends Plugin {
 		});
 	}
 
-	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: any): string {
+	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: Record<string, unknown>): string {
 		// Build replacement map
 		const fieldList = this.parseFieldListFromTemplate(template);
 
@@ -187,7 +187,7 @@ export default class YouTrackPlugin extends Plugin {
 		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
 	}
 
-	async createIssueNote(issueId: string, issueData: any) {
+	async createIssueNote(issueId: string, issueData: Record<string, unknown>) {
 		// Create folder if it doesn't exist
 		const folderPath = this.settings.notesFolder ? this.settings.notesFolder : "";
 		if (folderPath) {
@@ -315,8 +315,13 @@ class YouTrackIssueModal extends Modal {
 			this.statusEl.setText("");
 
 			try {
-				const issueData = await this.plugin.fetchIssueData(this.issueId);
-				await this.plugin.createIssueNote(this.issueId, issueData);
+				const response: unknown = await this.plugin.fetchIssueData(this.issueId);
+				if (typeof response === "object" && response !== null) {
+					const issueData = response as Record<string, unknown>;
+					await this.plugin.createIssueNote(this.issueId, issueData);
+				} else {
+					throw new Error("Invalid response format from YouTrack API");
+				}
 				this.close();
 			} catch (error) {
 				// Hide loading indicator
@@ -328,12 +333,14 @@ class YouTrackIssueModal extends Modal {
 			}
 		};
 
-		fetchButton.addEventListener("click", fetchIssue);
+		fetchButton.addEventListener("click", () => {
+			fetchIssue().catch(console.error);
+		});
 
 		// Handle Enter key press
 		input.inputEl.addEventListener("keypress", event => {
 			if (event.key === "Enter") {
-				fetchIssue();
+				fetchIssue().catch(console.error);
 			}
 		});
 	}
