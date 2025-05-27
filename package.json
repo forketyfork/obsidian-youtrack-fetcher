@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-youtrack-fetcher",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"description": "Obsidian plugin to fetch YouTrack issues into notes.",
 	"main": "main.js",
 	"scripts": {
