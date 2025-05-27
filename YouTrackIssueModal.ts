@@ -13,7 +13,6 @@ export default class YouTrackIssueModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.addClass("youtrack-modal");
 		contentEl.createEl("h2", { text: "Fetch YouTrack issue" });
 
 		// Create input field for issue ID
