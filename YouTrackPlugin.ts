@@ -56,7 +56,7 @@ export default class YouTrackPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, (await this.loadData()) as Partial<YouTrackPluginSettings>);
 	}
 
 	async saveSettings() {
@@ -90,7 +90,7 @@ export default class YouTrackPlugin extends Plugin {
 		}
 
 		// Determine fields from the template
-		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
+		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
 		const fieldList = this.parseFieldListFromTemplate(template);
 
 		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
@@ -185,23 +185,26 @@ export default class YouTrackPlugin extends Plugin {
 			url: issueUrl,
 		};
 
-		// always add "title" field from "summary" for backward compatibility
-		if (issueData.summary) {
-			replacements.title = String(issueData.summary);
-		}
-
 		// replace other fields specified in settings
 		for (const field of fieldList) {
 			const value = issueData[field];
 			if (value) {
-				let formatted = String(value);
+				let formatted: string;
 				if (TIMESTAMP_FIELDS.has(field)) {
 					formatted = this.formatTimestamp(value);
+				} else {
+					formatted = typeof value === "string" ? value : JSON.stringify(value);
 				}
-				replacements[field] = formatted;
+				// Support both ${summary} and ${title} for backward compatibility
+				if (field === "summary") {
+					replacements["title"] = formatted;
+					replacements["summary"] = formatted;
+				} else {
+					replacements[field] = formatted;
+				}
 			}
 		}
-		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[key] ?? "");
+		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[String(key)] ?? "");
 	}
 
 	async createIssueNote(issueId: string, issueData: Record<string, unknown>) {
@@ -226,7 +229,7 @@ export default class YouTrackPlugin extends Plugin {
 		const issueUrl = `${this.settings.youtrackUrl}/issue/${issueId}`;
 
 		// Try to read template file
-		const template = (await this.readTemplateFile()) || DEFAULT_TEMPLATE;
+		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
 
 		// Create note content
 		const noteContent = this.renderTemplate(template, issueId, issueUrl, issueData);

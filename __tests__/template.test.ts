@@ -72,5 +72,37 @@ Description of the issue
 
 			expect(result).toEqual(expected);
 		});
+
+		test("should support ${summary} field in template", () => {
+			plugin.settings = {
+				youtrackUrl: "",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const issueData = {
+				summary: "Test Summary",
+				description: "Test Description",
+			};
+
+			const template = `# \${summary}
+
+Description: \${description}`;
+
+			const result = plugin.renderTemplate(
+				template,
+				"TEST-123",
+				"https://youtrack.jetbrains.com/issue/TEST-123",
+				issueData
+			);
+
+			const expected = `# Test Summary
+
+Description: Test Description`;
+
+			expect(result).toEqual(expected);
+		});
 	});
 });
