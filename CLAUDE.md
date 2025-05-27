@@ -23,7 +23,7 @@ This file provides guidance to AI agents when working with code in this reposito
 - No implicit any values (noImplicitAny: true)
 - Run type check with `yarn typecheck`
 - ESLint is configured with typescript-eslint plugin
-- Testing is done with Jest (`yarn test`)
+- Testing is done with Jest (`yarn test:dev`); make sure to always run the build before running the tests (`yarn test:dev` already takes care of that)
 - All tests are in the `__tests__` directory
 - Test files should end with `.test.ts`
 

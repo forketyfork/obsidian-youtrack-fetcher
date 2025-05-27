@@ -4,8 +4,9 @@ import { App, PluginManifest } from "obsidian";
 describe("YouTrackPlugin", () => {
 	let plugin: YouTrackPlugin;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		plugin = new YouTrackPlugin({} as App, {} as PluginManifest);
+		await plugin.onload();
 	});
 
 	test("plugin loads with default settings", async () => {

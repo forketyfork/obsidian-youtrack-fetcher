@@ -1,4 +1,5 @@
 import { Plugin, TFile, normalizePath, requestUrl } from "obsidian";
+import * as _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
 interface YouTrackPluginSettings {
@@ -204,7 +205,10 @@ export default class YouTrackPlugin extends Plugin {
 				}
 			}
 		}
-		return template.replace(/\$\{([^}]+)\}/g, (_match, key) => replacements[String(key)] ?? "");
+
+		// Use lodash template with ${...} syntax
+		const compiled = _.template(template);
+		return compiled(replacements);
 	}
 
 	async createIssueNote(issueId: string, issueData: Record<string, unknown>) {

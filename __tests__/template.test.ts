@@ -4,13 +4,14 @@ import { App, PluginManifest } from "obsidian";
 describe("YouTrackPlugin Template Rendering", () => {
 	let plugin: YouTrackPlugin;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		plugin = new YouTrackPlugin({} as App, {} as PluginManifest);
 		// Set fixed locale and time zone for stable tests
 		plugin.dateTimeOptions = {
 			locale: "en-US",
 			timeZone: "UTC",
 		};
+		await plugin.onload();
 	});
 
 	describe("renderTemplate", () => {
@@ -73,7 +74,7 @@ Description of the issue
 			expect(result).toEqual(expected);
 		});
 
-		test("should support ${summary} field in template", () => {
+		test("should support summary field in template", () => {
 			plugin.settings = {
 				youtrackUrl: "",
 				apiToken: "",
