@@ -1,7 +1,7 @@
 {
 	"id": "youtrack-fetcher",
 	"name": "YouTrack Fetcher",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"author": "Forketyfork",
 	"minAppVersion": "0.15.0",
 	"description": "Fetches YouTrack issues into notes.",
