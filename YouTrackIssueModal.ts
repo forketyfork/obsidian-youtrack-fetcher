@@ -105,7 +105,8 @@ export default class YouTrackIssueModal extends Modal {
 				this.loadingIndicator.classList.remove("visible");
 
 				// Show error message
-				this.statusEl.setText(`Error: ${error.message}`);
+				const errorMessage = error instanceof Error ? error.message : String(error);
+				this.statusEl.setText(`Error: ${errorMessage}`);
 				this.statusEl.addClass("error-message");
 			}
 		};
