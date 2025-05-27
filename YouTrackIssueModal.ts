@@ -13,10 +13,11 @@ export default class YouTrackIssueModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
+		contentEl.addClass("youtrack-modal");
 		contentEl.createEl("h2", { text: "Fetch YouTrack issue" });
 
 		// Create input field for issue ID
-		const inputContainer = contentEl.createDiv();
+		const inputContainer = contentEl.createDiv({ cls: "youtrack-input-container" });
 		const input = new TextComponent(inputContainer)
 			.setPlaceholder("Issue URL or ID (e.g., ABC-123)")
 			.setValue(this.issueId || "")
@@ -27,6 +28,7 @@ export default class YouTrackIssueModal extends Modal {
 					this.statusEl.setText("");
 				}
 			});
+		input.inputEl.addClass("youtrack-input");
 
 		// Create status element for messages
 		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
