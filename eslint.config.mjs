@@ -2,7 +2,7 @@ import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
 import globals from "globals";
 import js from "@eslint/js";
-console.log("Using ESLint configuration for Obsidian plugin development");
+
 export default [
 	// Global ignores
 	{
