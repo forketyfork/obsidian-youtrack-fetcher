@@ -1,4 +1,10 @@
 /* YouTrack modal styling */
+.youtrack-input-container input {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: var(--radius-s);
+}
+
 .youtrack-modal-button-container {
 	display: flex;
 	justify-content: flex-end;
@@ -7,6 +13,7 @@
 
 .youtrack-modal-button-container button {
 	margin-left: 0.5rem;
+	border-radius: var(--radius-s);
 }
 
 .error-message {
