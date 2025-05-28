@@ -105,6 +105,12 @@ Run the tests in watch mode:
 yarn test:watch
 ```
 
+Generate a coverage report:
+
+```shell
+yarn coverage
+```
+
 Run the production build (includes tests, type checking, and formatting):
 
 ```shell
