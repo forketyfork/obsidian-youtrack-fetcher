@@ -13,7 +13,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 - Configurable note template
 - Use `${field}` placeholders in templates to insert values from fetched fields
 - Fields to fetch are parsed from your template automatically
-- You can specify nested fields, e.g., `${reporter.fullName}` or `${assignee.login}`
+- You can specify nested fields, e.g., `${reporter.fullName}`
 
 ## Installation
 
