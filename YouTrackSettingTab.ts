@@ -39,7 +39,7 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
-				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template). You can also use nested fields, e.g., ${reporter.fullName}."
+				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template). You can also use arbitrarily nested fields, e.g., ${reporter.manager.fullName}."
 			)
 			.addText(text =>
 				text

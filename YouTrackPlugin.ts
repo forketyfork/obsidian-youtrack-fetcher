@@ -122,17 +122,40 @@ export default class YouTrackPlugin extends Plugin {
 		return fieldMap;
 	}
 
-	// Generate YouTrack API fields query from field map
+	private buildNestedQuery(paths: Set<string>): string {
+		const tree: Record<string, Set<string>> = {};
+
+		for (const path of paths) {
+			const [head, ...rest] = path.split(".");
+			const key = head.trim();
+			if (!tree[key]) {
+				tree[key] = new Set();
+			}
+			if (rest.length > 0) {
+				tree[key].add(rest.join("."));
+			}
+		}
+
+		const parts: string[] = [];
+		for (const [key, subPaths] of Object.entries(tree)) {
+			if (subPaths.size === 0) {
+				parts.push(key);
+			} else {
+				parts.push(`${key}(${this.buildNestedQuery(subPaths)})`);
+			}
+		}
+
+		return parts.join(",");
+	}
+
+	// Generate YouTrack API fields query from field map with arbitrary nesting
 	buildYouTrackFieldsQuery(fieldMap: Record<string, Set<string>>): string {
 		const fields: string[] = [];
 		for (const [root, nestedSet] of Object.entries(fieldMap)) {
 			if (nestedSet.size === 0) {
 				fields.push(root);
 			} else {
-				const nestedFields = Array.from(nestedSet)
-					.map(f => f.split(".")[0]) // Only support one level of nesting for now
-					.filter((v, i, arr) => arr.indexOf(v) === i); // unique
-				fields.push(`${root}(${nestedFields.join(",")})`);
+				fields.push(`${root}(${this.buildNestedQuery(nestedSet)})`);
 			}
 		}
 		return fields.join(",");

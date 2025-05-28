@@ -145,5 +145,34 @@ Description: Test Description`;
 			expect(result).toContain("bob");
 			expect(result).toContain("alice@example.com");
 		});
+
+		test("should render template with deeply nested fields", () => {
+			plugin.settings = {
+				youtrackUrl: "https://youtrack.jetbrains.com",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const issueData = {
+				reporter: { manager: { fullName: "Jane Leader" } },
+				description: "Deep nested field test",
+			};
+
+			const template = "Manager: ${reporter.manager.fullName}";
+
+			const fields = Object.keys(plugin.parseFieldMapFromTemplate(template));
+
+			const result = plugin.renderTemplate(
+				template,
+				"ISSUE-2",
+				"https://youtrack.jetbrains.com/issue/ISSUE-2",
+				issueData,
+				fields
+			);
+
+			expect(result).toContain("Jane Leader");
+		});
 	});
 });
