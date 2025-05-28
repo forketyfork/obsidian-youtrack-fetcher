@@ -1,4 +1,4 @@
-import YouTrackPlugin from "../main";
+import YouTrackPlugin from "../YouTrackPlugin";
 import { App, PluginManifest } from "obsidian";
 
 describe("YouTrackPlugin Template Rendering", () => {
@@ -49,12 +49,15 @@ describe("YouTrackPlugin Template Rendering", () => {
 ## YouTrack ID: [\${id}](\${url})
 `;
 
+			const fields = Object.keys(plugin.parseFieldMapFromTemplate(template));
+
 			// Render the template
 			const result = plugin.renderTemplate(
 				template,
 				"ABC-123",
 				"https://youtrack.jetbrains.com/issue/ABC-123",
-				issueData
+				issueData,
+				fields
 			);
 
 			// Expected result
@@ -92,11 +95,14 @@ Description of the issue
 
 Description: \${description}`;
 
+			const fields = Object.keys(plugin.parseFieldMapFromTemplate(template));
+
 			const result = plugin.renderTemplate(
 				template,
 				"TEST-123",
 				"https://youtrack.jetbrains.com/issue/TEST-123",
-				issueData
+				issueData,
+				fields
 			);
 
 			const expected = `# Test Summary
@@ -104,6 +110,40 @@ Description: \${description}`;
 Description: Test Description`;
 
 			expect(result).toEqual(expected);
+		});
+
+		test("should render template with nested fields", () => {
+			plugin.settings = {
+				youtrackUrl: "https://youtrack.jetbrains.com",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const issueData = {
+				reporter: { fullName: "Alice Smith", email: "alice@example.com" },
+				assignee: { login: "bob", fullName: "Bob Jones" },
+				description: "Nested field test",
+			};
+
+			const template = "Reporter: ${reporter.fullName}\nAssignee: ${assignee.login}\nEmail: ${reporter.email}";
+
+			const fields = Object.keys(plugin.parseFieldMapFromTemplate(template));
+
+			const result = plugin.renderTemplate(
+				template,
+				"ISSUE-1",
+				"https://youtrack.jetbrains.com/issue/ISSUE-1",
+				issueData,
+				fields
+			);
+
+			// Now that nested field replacement is implemented, check for the actual value
+			expect(result).toContain("Alice Smith");
+			// Optionally, check for other nested values
+			expect(result).toContain("bob");
+			expect(result).toContain("alice@example.com");
 		});
 	});
 });

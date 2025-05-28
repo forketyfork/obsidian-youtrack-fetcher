@@ -1,4 +1,4 @@
-import YouTrackPlugin from "../main";
+import YouTrackPlugin from "../YouTrackPlugin";
 import { App, PluginManifest } from "obsidian";
 
 describe("YouTrackPlugin Utils", () => {
@@ -14,23 +14,42 @@ describe("YouTrackPlugin Utils", () => {
 		await plugin.onload();
 	});
 
-	describe("parseFieldListFromTemplate", () => {
-		test("should return empty list for template without fields", () => {
+	describe("parseFieldMapFromTemplate", () => {
+		test("should return empty object for template without fields", () => {
 			const template = "# ${id}\nURL: ${url}";
-			const result = plugin.parseFieldListFromTemplate(template);
-			expect(result).toEqual([]);
+			const result = plugin.parseFieldMapFromTemplate(template);
+			expect(result).toEqual({});
 		});
 
 		test("should collect unique fields", () => {
 			const template = "${created} ${updated} ${created}";
-			const result = plugin.parseFieldListFromTemplate(template);
-			expect(result).toEqual(["created", "updated"]);
+			const result = plugin.parseFieldMapFromTemplate(template);
+			expect(result).toEqual({ created: new Set(), updated: new Set() });
 		});
 
-		test("should map title to summary and ignore id and url", () => {
-			const template = "# ${id}: ${title} (${url})";
-			const result = plugin.parseFieldListFromTemplate(template);
-			expect(result).toEqual(["summary"]);
+		it("extracts simple fields", () => {
+			const template = "ID: ${id}, Title: ${title}, URL: ${url}, Desc: ${description}";
+			expect(Object.keys(plugin.parseFieldMapFromTemplate(template)).sort()).toEqual(["description", "summary"]);
+		});
+
+		it("extracts root of nested fields", () => {
+			const template = "Reporter: ${reporter.fullName}, Assignee: ${assignee.login}";
+			expect(Object.keys(plugin.parseFieldMapFromTemplate(template)).sort()).toEqual(["assignee", "reporter"]);
+		});
+
+		it("ignores id and url", () => {
+			const template = "${id} ${url} ${created}";
+			expect(plugin.parseFieldMapFromTemplate(template)).toEqual({ created: new Set() });
+		});
+
+		it("handles duplicate and whitespace", () => {
+			const template = "${reporter.fullName} ${reporter .email} ${reporter}";
+			expect(plugin.parseFieldMapFromTemplate(template)).toEqual({ reporter: new Set(["fullName", "email"]) });
+		});
+
+		it("maps title to summary", () => {
+			const template = "${title} ${summary}";
+			expect(Object.keys(plugin.parseFieldMapFromTemplate(template))).toEqual(["summary"]);
 		});
 	});
 
@@ -84,6 +103,51 @@ describe("YouTrackPlugin Utils", () => {
 
 		test("should return null for invalid ID format", () => {
 			expect(plugin.parseIssueId("ABC123")).toBeNull();
+		});
+	});
+
+	describe("parseFieldMapFromTemplate & buildYouTrackFieldsQuery", () => {
+		it("should handle simple and nested fields", () => {
+			const template =
+				"ID: ${id}, Title: ${title}, Desc: ${description}, Reporter: ${reporter.fullName}, Assignee: ${assignee.login}";
+			const fieldMap = plugin.parseFieldMapFromTemplate(template);
+			// Should group nested fields under their root
+			expect(fieldMap).toEqual({
+				description: new Set(),
+				reporter: new Set(["fullName"]),
+				assignee: new Set(["login"]),
+				summary: new Set(),
+			});
+			const query = plugin.buildYouTrackFieldsQuery(fieldMap);
+			// Order may vary, so check for all required parts
+			expect(query).toContain("reporter(fullName)");
+			expect(query).toContain("assignee(login)");
+			expect(query).toContain("summary");
+			expect(query).toContain("description");
+		});
+
+		it("should deduplicate nested fields and ignore id/url", () => {
+			const template = "${id} ${url} ${reporter.fullName} ${reporter.email} ${reporter}";
+			const fieldMap = plugin.parseFieldMapFromTemplate(template);
+			expect(fieldMap).toEqual({
+				reporter: new Set(["fullName", "email"]),
+			});
+			const query = plugin.buildYouTrackFieldsQuery(fieldMap);
+			expect(query).toBe("reporter(fullName,email)");
+		});
+
+		it("should support multiple roots and no nested fields", () => {
+			const template = "${created} ${updated} ${summary}";
+			const fieldMap = plugin.parseFieldMapFromTemplate(template);
+			expect(fieldMap).toEqual({
+				created: new Set(),
+				updated: new Set(),
+				summary: new Set(),
+			});
+			const query = plugin.buildYouTrackFieldsQuery(fieldMap);
+			expect(query).toContain("created");
+			expect(query).toContain("updated");
+			expect(query).toContain("summary");
 		});
 	});
 });
