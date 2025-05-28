@@ -250,20 +250,20 @@ export default class YouTrackPlugin extends Plugin {
 		// replace other fields mentioned in the template
 		for (const field of fields) {
 			const value = issueData[field];
+			let formatted: string | object = "";
 			if (value) {
-				let formatted: string | object;
 				if (TIMESTAMP_FIELDS.has(field)) {
 					formatted = this.formatTimestamp(value);
 				} else {
 					formatted = value;
 				}
-				// Support both ${summary} and ${title} for backward compatibility
-				if (field === "summary") {
-					replacements["title"] = formatted;
-					replacements["summary"] = formatted;
-				} else {
-					replacements[field] = formatted;
-				}
+			}
+			// Support both ${summary} and ${title} for backward compatibility
+			if (field === "summary") {
+				replacements["title"] = formatted;
+				replacements["summary"] = formatted;
+			} else {
+				replacements[field] = formatted;
 			}
 		}
 

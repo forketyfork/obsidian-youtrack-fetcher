@@ -174,5 +174,28 @@ Description: Test Description`;
 
 			expect(result).toContain("Jane Leader");
 		});
+
+		// Test: missing field should be replaced with empty string
+		test("should replace missing fields with empty string", () => {
+			plugin.settings = {
+				youtrackUrl: "",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const template = "ID: ${id}\nResolved: ${resolved}\nSummary: ${summary}\nTitle: ${title}";
+			const issueId = "TEST-1";
+			const issueUrl = "https://youtrack.example.com/issue/TEST-1";
+			const issueData = { summary: "Test summary" };
+			const fields = ["resolved", "summary"];
+
+			const result = plugin.renderTemplate(template, issueId, issueUrl, issueData, fields);
+			expect(result).toContain("ID: TEST-1");
+			expect(result).toContain("Resolved: "); // should be empty
+			expect(result).toContain("Summary: Test summary");
+			expect(result).toContain("Title: Test summary"); // title is mapped from summary
+		});
 	});
 });
