@@ -39,7 +39,7 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
-				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template)"
+				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template). You can also use nested fields, e.g., ${reporter.fullName}."
 			)
 			.addText(text =>
 				text
@@ -49,6 +49,12 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 						this.plugin.settings.templatePath = value;
 						await this.plugin.saveSettings();
 					})
+			)
+			.addExtraButton(button =>
+				button.setIcon("help").onClick(() => {
+					const helpUrl = "https://www.jetbrains.com/help/youtrack/devportal/api-entity-Issue.html";
+					window.open(helpUrl, "_blank");
+				})
 			);
 
 		new Setting(containerEl)

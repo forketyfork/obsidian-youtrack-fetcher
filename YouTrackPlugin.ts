@@ -64,6 +64,21 @@ export default class YouTrackPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	async importIssue(issueId: string) {
+		// Determine fields from the template
+		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
+		const fieldMap = this.parseFieldMapFromTemplate(template);
+
+		// fetch the issue data from YouTrack API
+		const response: unknown = await this.fetchIssueData(issueId, template, fieldMap);
+		if (typeof response === "object" && response !== null) {
+			const issueData = response as Record<string, unknown>;
+			await this.createIssueNote(issueId, issueData, template, Object.keys(fieldMap));
+		} else {
+			throw new Error("Invalid response format from YouTrack API");
+		}
+	}
+
 	async readTemplateFile(): Promise<string | null> {
 		if (!this.settings.templatePath) {
 			return null;
@@ -85,16 +100,52 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
-	async fetchIssueData(issueId: string): Promise<unknown> {
+	// Parse all fields (including nested) referenced in a template
+	parseFieldMapFromTemplate(template: string): Record<string, Set<string>> {
+		const fieldMap: Record<string, Set<string>> = {};
+		const matches = template.matchAll(/\$\{([^}]+)\}/g);
+
+		for (const match of matches) {
+			let field = match[1].trim();
+			if (!field || field === "id" || field === "url") continue;
+			// Map title to summary
+			if (field === "title") field = "summary";
+
+			const [rootRaw, ...nestedRaw] = field.split(".");
+			const root = rootRaw.trim();
+			const nested = nestedRaw.map(f => f.trim()).filter(Boolean);
+			if (!fieldMap[root]) fieldMap[root] = new Set();
+			if (nested.length > 0) {
+				fieldMap[root].add(nested.join("."));
+			}
+		}
+		return fieldMap;
+	}
+
+	// Generate YouTrack API fields query from field map
+	buildYouTrackFieldsQuery(fieldMap: Record<string, Set<string>>): string {
+		const fields: string[] = [];
+		for (const [root, nestedSet] of Object.entries(fieldMap)) {
+			if (nestedSet.size === 0) {
+				fields.push(root);
+			} else {
+				const nestedFields = Array.from(nestedSet)
+					.map(f => f.split(".")[0]) // Only support one level of nesting for now
+					.filter((v, i, arr) => arr.indexOf(v) === i); // unique
+				fields.push(`${root}(${nestedFields.join(",")})`);
+			}
+		}
+		return fields.join(",");
+	}
+
+	async fetchIssueData(issueId: string, template: string, fieldMap: Record<string, Set<string>>): Promise<unknown> {
 		if (!this.settings.youtrackUrl) {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
 
-		// Determine fields from the template
-		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
-		const fieldList = this.parseFieldListFromTemplate(template);
+		const fieldsQuery = this.buildYouTrackFieldsQuery(fieldMap);
 
-		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldList.join(",")}`;
+		const apiUrl = `${this.settings.youtrackUrl}/api/issues/${issueId}?fields=${fieldsQuery}`;
 
 		const headers: Record<string, string> = {
 			Accept: "application/json",
@@ -122,21 +173,6 @@ export default class YouTrackPlugin extends Plugin {
 			console.error("Error fetching YouTrack issue:", error);
 			throw error;
 		}
-	}
-
-	// Parse list of fields referenced in a template
-	parseFieldListFromTemplate(template: string): string[] {
-		const fields = new Set<string>();
-		const matches = template.matchAll(/\$\{([^}]+)\}/g);
-
-		for (const match of matches) {
-			const field = match[1].trim();
-			if (!field || field === "id" || field === "url") continue;
-
-			fields.add(field === "title" ? "summary" : field);
-		}
-
-		return Array.from(fields);
 	}
 
 	parseIssueId(input: string): string | null {
@@ -176,25 +212,27 @@ export default class YouTrackPlugin extends Plugin {
 		});
 	}
 
-	renderTemplate(template: string, issueId: string, issueUrl: string, issueData: Record<string, unknown>): string {
-		// Build replacement map
-		const fieldList = this.parseFieldListFromTemplate(template);
-
-		// these fields are always replaced
-		const replacements: Record<string, string> = {
+	renderTemplate(
+		template: string,
+		issueId: string,
+		issueUrl: string,
+		issueData: Record<string, unknown>,
+		fields: string[]
+	): string {
+		const replacements: Record<string, string | object> = {
 			id: issueId,
 			url: issueUrl,
 		};
 
-		// replace other fields specified in settings
-		for (const field of fieldList) {
+		// replace other fields mentioned in the template
+		for (const field of fields) {
 			const value = issueData[field];
 			if (value) {
-				let formatted: string;
+				let formatted: string | object;
 				if (TIMESTAMP_FIELDS.has(field)) {
 					formatted = this.formatTimestamp(value);
 				} else {
-					formatted = typeof value === "string" ? value : JSON.stringify(value);
+					formatted = value;
 				}
 				// Support both ${summary} and ${title} for backward compatibility
 				if (field === "summary") {
@@ -211,7 +249,7 @@ export default class YouTrackPlugin extends Plugin {
 		return compiled(replacements);
 	}
 
-	async createIssueNote(issueId: string, issueData: Record<string, unknown>) {
+	async createIssueNote(issueId: string, issueData: Record<string, unknown>, template: string, fields: string[]) {
 		// Create folder if it doesn't exist
 		const folderPath = this.settings.notesFolder ? this.settings.notesFolder : "";
 		if (folderPath) {
@@ -232,11 +270,8 @@ export default class YouTrackPlugin extends Plugin {
 		// Construct issue URL
 		const issueUrl = `${this.settings.youtrackUrl}/issue/${issueId}`;
 
-		// Try to read template file
-		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
-
 		// Create note content
-		const noteContent = this.renderTemplate(template, issueId, issueUrl, issueData);
+		const noteContent = this.renderTemplate(template, issueId, issueUrl, issueData, fields);
 
 		// Create file in Obsidian vault
 		try {

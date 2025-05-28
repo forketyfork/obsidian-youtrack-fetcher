@@ -92,13 +92,7 @@ export default class YouTrackIssueModal extends Modal {
 			this.statusEl.setText("");
 
 			try {
-				const response: unknown = await this.plugin.fetchIssueData(parsedId);
-				if (typeof response === "object" && response !== null) {
-					const issueData = response as Record<string, unknown>;
-					await this.plugin.createIssueNote(parsedId, issueData);
-				} else {
-					throw new Error("Invalid response format from YouTrack API");
-				}
+				await this.plugin.importIssue(parsedId);
 				this.close();
 			} catch (error) {
 				// Hide loading indicator
