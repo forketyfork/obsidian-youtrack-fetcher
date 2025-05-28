@@ -149,5 +149,15 @@ describe("YouTrackPlugin Utils", () => {
 			expect(query).toContain("updated");
 			expect(query).toContain("summary");
 		});
+
+		it("should handle arbitrarily nested fields", () => {
+			const template = "Manager: ${reporter.manager.fullName} ${reporter.manager.email}";
+			const fieldMap = plugin.parseFieldMapFromTemplate(template);
+			expect(fieldMap).toEqual({
+				reporter: new Set(["manager.fullName", "manager.email"]),
+			});
+			const query = plugin.buildYouTrackFieldsQuery(fieldMap);
+			expect(query).toBe("reporter(manager(fullName,email))");
+		});
 	});
 });

@@ -145,5 +145,57 @@ Description: Test Description`;
 			expect(result).toContain("bob");
 			expect(result).toContain("alice@example.com");
 		});
+
+		test("should render template with deeply nested fields", () => {
+			plugin.settings = {
+				youtrackUrl: "https://youtrack.jetbrains.com",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const issueData = {
+				reporter: { manager: { fullName: "Jane Leader" } },
+				description: "Deep nested field test",
+			};
+
+			const template = "Manager: ${reporter.manager.fullName}";
+
+			const fields = Object.keys(plugin.parseFieldMapFromTemplate(template));
+
+			const result = plugin.renderTemplate(
+				template,
+				"ISSUE-2",
+				"https://youtrack.jetbrains.com/issue/ISSUE-2",
+				issueData,
+				fields
+			);
+
+			expect(result).toContain("Jane Leader");
+		});
+
+		// Test: missing field should be replaced with empty string
+		test("should replace missing fields with empty string", () => {
+			plugin.settings = {
+				youtrackUrl: "",
+				apiToken: "",
+				useApiToken: false,
+				notesFolder: "",
+				templatePath: "",
+			};
+
+			const template = "ID: ${id}\nResolved: ${resolved}\nSummary: ${summary}\nTitle: ${title}";
+			const issueId = "TEST-1";
+			const issueUrl = "https://youtrack.example.com/issue/TEST-1";
+			const issueData = { summary: "Test summary" };
+			const fields = ["resolved", "summary"];
+
+			const result = plugin.renderTemplate(template, issueId, issueUrl, issueData, fields);
+			expect(result).toContain("ID: TEST-1");
+			expect(result).toContain("Resolved: "); // should be empty
+			expect(result).toContain("Summary: Test summary");
+			expect(result).toContain("Title: Test summary"); // title is mapped from summary
+		});
 	});
 });
