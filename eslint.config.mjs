@@ -34,7 +34,7 @@ export default [
 
 	// Project-specific overrides applied on top of the recommended preset
 	{
-		files: ["**/*.ts"],
+		files: ["**/*.ts", "**/*.tsx"],
 		languageOptions: {
 			parserOptions: {
 				project: "./tsconfig.json",

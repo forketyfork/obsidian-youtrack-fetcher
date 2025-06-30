@@ -39,6 +39,8 @@
 		"@types/jest": "^30.0.0",
 		"@types/lodash": "^4.17.24",
 		"@types/node": "^26.1.1",
+		"@types/react": "^19.2.18",
+		"@types/react-dom": "^19.2.4",
 		"@typescript-eslint/eslint-plugin": "^8.63.0",
 		"@typescript-eslint/parser": "^8.63.0",
 		"esbuild": "^0.28.1",
@@ -57,5 +59,9 @@
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.63.0"
 	},
-	"packageManager": "pnpm@11.1.2"
+	"packageManager": "pnpm@11.1.2",
+	"dependencies": {
+		"react": "^19.2.8",
+		"react-dom": "^19.2.8"
+	}
 }
