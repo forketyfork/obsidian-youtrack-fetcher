@@ -1,19 +1,62 @@
 /* YouTrack modal styling */
+.youtrack-modal-content h2 {
+	margin-bottom: 1rem;
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+.youtrack-input-container {
+	margin-bottom: 1rem;
+}
+
 .youtrack-input-container input {
 	width: 100%;
 	padding: 0.5rem;
 	border-radius: var(--radius-s);
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	color: var(--text-normal);
+}
+
+.youtrack-input-container input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
 }
 
 .youtrack-modal-button-container {
 	display: flex;
 	justify-content: flex-end;
+	gap: 0.5rem;
 	margin-top: 1rem;
 }
 
 .youtrack-modal-button-container button {
-	margin-left: 0.5rem;
+	padding: 0.5rem 1rem;
 	border-radius: var(--radius-s);
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+	color: var(--text-normal);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.youtrack-modal-button-container button:hover {
+	background: var(--background-modifier-hover);
+}
+
+.youtrack-modal-button-container button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.youtrack-modal-button-container button.mod-cta {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.youtrack-modal-button-container button.mod-cta:hover:not(:disabled) {
+	background: var(--interactive-accent-hover);
 }
 
 .error-message {
@@ -54,4 +97,90 @@
 	to {
 		transform: rotate(360deg);
 	}
+}
+
+/* YouTrack settings styling */
+.youtrack-settings {
+	padding: 0;
+}
+
+.youtrack-settings .setting-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 0;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.youtrack-settings .setting-item:last-child {
+	border-bottom: none;
+}
+
+.youtrack-settings .setting-item-info {
+	flex: 1;
+	margin-right: 1rem;
+}
+
+.youtrack-settings .setting-item-name {
+	font-weight: 600;
+	margin-bottom: 0.25rem;
+}
+
+.youtrack-settings .setting-item-description {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+	line-height: 1.4;
+}
+
+.youtrack-settings .setting-item-control {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-width: 200px;
+}
+
+.youtrack-settings .setting-item-control input[type="text"],
+.youtrack-settings .setting-item-control input[type="password"] {
+	flex: 1;
+	padding: 0.5rem;
+	border-radius: var(--radius-s);
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	color: var(--text-normal);
+}
+
+.youtrack-settings .setting-item-control input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+.youtrack-settings .checkbox-container {
+	display: flex;
+	align-items: center;
+}
+
+.youtrack-settings .checkbox-container input[type="checkbox"] {
+	width: 1.2rem;
+	height: 1.2rem;
+	cursor: pointer;
+}
+
+.youtrack-settings .clickable-icon {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+	color: var(--text-muted);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	transition: all 0.2s ease;
+}
+
+.youtrack-settings .clickable-icon:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
 }
