@@ -14,7 +14,7 @@ This file provides guidance to AI agents when working with code in this reposito
 - `yarn test:dev` - Run development build and then tests
 - `yarn test:watch` - Run development build and then tests in watch mode
 - `yarn build` - Production build (includes tests, typecheck and formatting)
-- `yarn build:css` - Minify CSS with CSSO (from styles.src.css to styles.css)
+- `yarn build:css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
 - `yarn version` - Bump version in manifest.json and versions.json
 
 ## Typescript & Testing
