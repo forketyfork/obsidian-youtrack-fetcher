@@ -14,7 +14,7 @@ This file provides guidance to AI agents when working with code in this reposito
 - `yarn test:dev` - Run development build and then tests
 - `yarn test:watch` - Run development build and then tests in watch mode
 - `yarn build` - Production build (includes tests, typecheck and formatting)
-- `yarn build:css` - Minify CSS with CSSO (from styles.src.css to styles.css)
+- `yarn build:css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
 - `yarn version` - Bump version in manifest.json and versions.json
 
 ## Typescript & Testing
@@ -41,3 +41,5 @@ This file provides guidance to AI agents when working with code in this reposito
 - Any text in UI elements should use "Sentence case" instead of "Title Case"
 - Avoid committing changes in `yarn.lock` if you didn't change the `package.json` file, reset the `yarn.lock` file instead
 - Avoid committing package-lock.json, since we use yarn; if this file is created as a result of your actions, remove it
+
+
