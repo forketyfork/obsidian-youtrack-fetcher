@@ -36,6 +36,7 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Code Style
 
+- All source code (TypeScript, CSS, tests, mocks) should reside in the src directory.
 - Avoid useless comments, use them to communicate obscure things and intentions which are not clear from the code rather than obvious details
 - Use Obsidian API imports from a single import statement
 - Use interfaces for type definitions
