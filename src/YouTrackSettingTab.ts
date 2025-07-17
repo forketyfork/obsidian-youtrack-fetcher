@@ -1,5 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
+import { FileSuggest } from "./FileSuggest";
+import { FolderSuggest } from "./FolderSuggest";
 export default class YouTrackSettingTab extends PluginSettingTab {
 	plugin: YouTrackPlugin;
 
@@ -17,7 +19,6 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 			.setDesc("URL of your YouTrack installation (e.g., https://youtrack.jetbrains.com)")
 			.addText(text =>
 				text.setValue(this.plugin.settings.youtrackUrl).onChange(async value => {
-					// Remove trailing slash if present
 					this.plugin.settings.youtrackUrl = value.replace(/\/$/, "");
 					await this.plugin.saveSettings();
 				})
@@ -26,30 +27,34 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Notes folder")
 			.setDesc("Folder to store YouTrack issue notes (leave empty for vault root)")
-			.addText(text =>
+			.addText(text => {
 				text
 					.setPlaceholder("YouTrack")
 					.setValue(this.plugin.settings.notesFolder)
 					.onChange(async value => {
 						this.plugin.settings.notesFolder = value;
 						await this.plugin.saveSettings();
-					})
-			);
+					});
+
+				new FolderSuggest(this.app, text.inputEl);
+			});
 
 		new Setting(containerEl)
 			.setName("Note template")
 			.setDesc(
 				"Path to a template file in your vault. Use ${id}, ${title}, ${url} and any issue fields as placeholders (leave empty for default template). You can also use arbitrarily nested fields, e.g., ${project.team.name}."
 			)
-			.addText(text =>
+			.addText(text => {
 				text
 					.setPlaceholder("Template path")
 					.setValue(this.plugin.settings.templatePath)
 					.onChange(async value => {
 						this.plugin.settings.templatePath = value;
 						await this.plugin.saveSettings();
-					})
-			)
+					});
+
+				new FileSuggest(this.app, text.inputEl);
+			})
 			.addExtraButton(button =>
 				button.setIcon("help").onClick(() => {
 					const helpUrl = "https://www.jetbrains.com/help/youtrack/devportal/api-entity-Issue.html";
@@ -83,7 +88,6 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 				)
 				.addExtraButton(button =>
 					button.setIcon("help").onClick(() => {
-						// Open YouTrack help page in browser
 						const helpUrl = "https://www.jetbrains.com/help/youtrack/server/manage-permanent-token.html";
 						window.open(helpUrl, "_blank");
 					})

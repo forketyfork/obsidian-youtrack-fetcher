@@ -67,6 +67,12 @@ module.exports = {
 		}
 	},
 	TFile: class TFile {},
+	TFolder: class TFolder {},
+	AbstractInputSuggest: class AbstractInputSuggest {
+		constructor() {}
+		setValue() {}
+		close() {}
+	},
 	normalizePath: path => path,
 	requestUrl: () =>
 		Promise.resolve({

@@ -1,5 +1,5 @@
 import { Plugin, TFile, normalizePath, requestUrl } from "obsidian";
-import * as _ from "lodash";
+import _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
 interface YouTrackPluginSettings {
@@ -37,20 +37,16 @@ export default class YouTrackPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// Add settings tab
 		this.addSettingTab(new YouTrackSettingTab(this.app, this));
 
-		// Add command to fetch YouTrack issue
 		this.addCommand({
 			id: "fetch-youtrack-issue",
 			name: "Fetch YouTrack issue",
 			callback: () => {
-				// Open modal to input issue ID
 				new YouTrackIssueModal(this.app, this).open();
 			},
 		});
 
-		// Add ribbon icon
 		this.addRibbonIcon("clipboard-list", "Fetch YouTrack issue", () => {
 			new YouTrackIssueModal(this.app, this).open();
 		});
@@ -65,12 +61,10 @@ export default class YouTrackPlugin extends Plugin {
 	}
 
 	async importIssue(issueId: string) {
-		// Determine fields from the template
 		const template = (await this.readTemplateFile()) ?? DEFAULT_TEMPLATE;
 		const fieldMap = this.parseFieldMapFromTemplate(template);
 
-		// fetch the issue data from YouTrack API
-		const response: unknown = await this.fetchIssueData(issueId, template, fieldMap);
+		const response: unknown = await this.fetchIssueData(issueId, fieldMap);
 		if (typeof response === "object" && response !== null) {
 			const issueData = response as Record<string, unknown>;
 			await this.createIssueNote(issueId, issueData, template, Object.keys(fieldMap));
@@ -86,14 +80,14 @@ export default class YouTrackPlugin extends Plugin {
 
 		try {
 			const normalizedPath = normalizePath(this.settings.templatePath);
-			const exists = await this.app.vault.adapter.exists(normalizedPath);
+			const file = this.app.vault.getAbstractFileByPath(normalizedPath);
 
-			if (!exists) {
+			if (!file || !(file instanceof TFile)) {
 				console.error(`Template file not found: ${normalizedPath}`);
 				return null;
 			}
 
-			return await this.app.vault.adapter.read(normalizedPath);
+			return await this.app.vault.cachedRead(file);
 		} catch (error) {
 			console.error("Error reading template file:", error);
 			return null;
@@ -161,7 +155,7 @@ export default class YouTrackPlugin extends Plugin {
 		return fields.join(",");
 	}
 
-	async fetchIssueData(issueId: string, template: string, fieldMap: Record<string, Set<string>>): Promise<unknown> {
+	async fetchIssueData(issueId: string, fieldMap: Record<string, Set<string>>): Promise<unknown> {
 		if (!this.settings.youtrackUrl) {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
@@ -247,7 +241,6 @@ export default class YouTrackPlugin extends Plugin {
 			url: issueUrl,
 		};
 
-		// replace other fields mentioned in the template
 		for (const field of fields) {
 			const value = issueData[field];
 			let formatted: string | object = "";
@@ -273,12 +266,11 @@ export default class YouTrackPlugin extends Plugin {
 	}
 
 	async createIssueNote(issueId: string, issueData: Record<string, unknown>, template: string, fields: string[]) {
-		// Create folder if it doesn't exist
 		const folderPath = this.settings.notesFolder ? this.settings.notesFolder : "";
 		if (folderPath) {
 			try {
-				const folderExists = await this.app.vault.adapter.exists(folderPath);
-				if (!folderExists) {
+				const folder = this.app.vault.getAbstractFileByPath(folderPath);
+				if (!folder) {
 					await this.app.vault.createFolder(folderPath);
 				}
 			} catch (error) {
@@ -287,21 +279,16 @@ export default class YouTrackPlugin extends Plugin {
 			}
 		}
 
-		// Create file name from issue ID
 		const fileName = `${folderPath ? folderPath + "/" : ""}${issueId}.md`;
 
-		// Construct issue URL
 		const issueUrl = `${this.settings.youtrackUrl}/issue/${issueId}`;
 
-		// Create note content
 		const noteContent = this.renderTemplate(template, issueId, issueUrl, issueData, fields);
 
-		// Create file in Obsidian vault
 		try {
 			const normalizedPath = normalizePath(fileName);
 			await this.app.vault.create(normalizedPath, noteContent);
 
-			// Open the newly created file
 			const file = this.app.vault.getAbstractFileByPath(normalizedPath);
 			if (file instanceof TFile) {
 				await this.app.workspace.getLeaf().openFile(file);

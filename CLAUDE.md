@@ -42,7 +42,7 @@ This file provides guidance to AI agents when working with code in this reposito
 - Add explicit error handling with try/catch blocks
 - Use async/await for asynchronous operations
 - Error messages should be user-friendly
-- Avoid unnecessary logging to the console, no debug messages, only errors
+- Avoid unnecessary logging to the console, no debug messages, only actual errors using console.error()
 - Use consistent indentation (tabs) and spacing
 - Class methods order: lifecycle methods first, then functionality
 - Any text in UI elements should use "Sentence case" instead of "Title Case"
