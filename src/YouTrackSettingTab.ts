@@ -77,15 +77,16 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 			new Setting(containerEl)
 				.setName("API token")
 				.setDesc("Permanent API token for YouTrack authentication")
-				.addText(text =>
+				.addText(text => {
 					text
 						.setPlaceholder("Enter your API token")
 						.setValue(this.plugin.settings.apiToken)
 						.onChange(async value => {
 							this.plugin.settings.apiToken = value;
 							await this.plugin.saveSettings();
-						})
-				)
+						});
+					text.inputEl.type = "password";
+				})
 				.addExtraButton(button =>
 					button.setIcon("help").onClick(() => {
 						const helpUrl = "https://www.jetbrains.com/help/youtrack/server/manage-permanent-token.html";
