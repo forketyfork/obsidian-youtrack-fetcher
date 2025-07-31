@@ -2,6 +2,8 @@
 
 [![Build status](https://github.com/forketyfork/obsidian-youtrack-fetcher/actions/workflows/build.yml/badge.svg)](https://github.com/forketyfork/obsidian-youtrack-fetcher/actions/workflows/build.yml)
 [![Latest Release](https://img.shields.io/github/v/release/forketyfork/obsidian-youtrack-fetcher)](https://github.com/forketyfork/obsidian-youtrack-fetcher/releases/latest)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/language-TypeScript-blue.svg)](https://www.typescriptlang.org/)
 
 This Obsidian plugin allows you to quickly fetch YouTrack issues and create notes from them in your Obsidian vault.
 
