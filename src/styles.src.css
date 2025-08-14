@@ -99,3 +99,16 @@
 	align-items: center;
 	color: var(--text-muted);
 }
+
+.modal.youtrack-search-modal {
+	width: 90%;
+	max-width: 800px;
+}
+
+.youtrack-pagination-container button:not(:first-child) {
+	margin-left: 0.5em;
+}
+
+.youtrack-results-table td a {
+	cursor: pointer;
+}

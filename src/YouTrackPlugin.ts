@@ -9,6 +9,7 @@ interface YouTrackPluginSettings {
 	useApiToken: boolean;
 	notesFolder: string;
 	templatePath: string;
+	queryHistory: string[];
 }
 
 export interface YouTrackIssue {
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	useApiToken: false,
 	notesFolder: "YouTrack",
 	templatePath: "",
+	queryHistory: [],
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";

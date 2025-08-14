@@ -1,6 +1,7 @@
 import { App, Modal, Platform, setIcon, TextComponent, TFile } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
 import { YouTrackIssue } from "./YouTrackPlugin";
+import { QuerySuggest } from "./QuerySuggest";
 
 export default class YouTrackSearchModal extends Modal {
 	plugin: YouTrackPlugin;
@@ -20,6 +21,7 @@ export default class YouTrackSearchModal extends Modal {
 	}
 
 	onOpen() {
+		this.modalEl.addClass("youtrack-search-modal");
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.createEl("h2", { text: "Search YouTrack issues" });
@@ -29,6 +31,7 @@ export default class YouTrackSearchModal extends Modal {
 			.setPlaceholder("Enter YouTrack query")
 			.onChange(value => (this.query = value));
 		searchInput.inputEl.addClass("youtrack-input");
+		new QuerySuggest(this.plugin, searchInput.inputEl);
 		searchInput.inputEl.addEventListener("keypress", e => {
 			if (e.key === "Enter") {
 				void this.search();
@@ -75,6 +78,8 @@ export default class YouTrackSearchModal extends Modal {
 			this.statusEl.setText("Please enter a search query.");
 			return;
 		}
+
+		this.addQueryToHistory(this.query);
 
 		this.loadingIndicator.classList.add("visible");
 		this.resultsEl.empty();
@@ -137,16 +142,17 @@ export default class YouTrackSearchModal extends Modal {
 			row.createEl("td", { text: stateField?.value?.name ?? "N/A" });
 
 			const actionCell = row.createEl("td");
-			const actionButton = actionCell.createEl("button");
 
 			const existingFile = this.getExistingFile(issue.idReadable);
 			if (existingFile) {
-				setIcon(actionButton, "share");
-				actionButton.addEventListener("click", () => {
+				const actionLink = actionCell.createEl("a");
+				setIcon(actionLink, "share");
+				actionLink.addEventListener("click", () => {
 					void this.app.workspace.getLeaf().openFile(existingFile);
 					this.close();
 				});
 			} else {
+				const actionButton = actionCell.createEl("button");
 				setIcon(actionButton, "download");
 				actionButton.addEventListener("click", () => {
 					void this.importIssue(issue.idReadable);
@@ -194,5 +200,24 @@ export default class YouTrackSearchModal extends Modal {
 		const fileName = `${folderPath ? `${folderPath}/` : ""}${issueId}.md`;
 		const file = this.app.vault.getAbstractFileByPath(fileName);
 		return file instanceof TFile ? file : null;
+	}
+
+	private addQueryToHistory(query: string) {
+		const { settings } = this.plugin;
+		const history = settings.queryHistory || [];
+
+		// Remove the query if it already exists to move it to the top
+		const index = history.indexOf(query);
+		if (index > -1) {
+			history.splice(index, 1);
+		}
+
+		// Add the new query to the beginning of the history
+		history.unshift(query);
+
+		// Limit the history to the last 10 queries
+		settings.queryHistory = history.slice(0, 10);
+
+		void this.plugin.saveSettings();
 	}
 }
