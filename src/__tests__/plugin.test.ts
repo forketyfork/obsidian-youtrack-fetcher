@@ -2,7 +2,9 @@ import YouTrackPlugin from "../main";
 import { App, PluginManifest, requestUrl } from "obsidian";
 
 jest.mock("obsidian", () => {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const obsidianMock = jest.requireActual("../__mocks__/obsidian");
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	return {
 		...obsidianMock,
 		requestUrl: jest.fn(),
