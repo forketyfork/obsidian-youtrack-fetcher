@@ -89,7 +89,8 @@
 }
 
 .youtrack-results-container {
-	min-height: 300px;
+	height: 300px;
+	overflow-y: auto;
 }
 
 .youtrack-page-display {
