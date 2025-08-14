@@ -8,6 +8,7 @@ export default class YouTrackSearchModal extends Modal {
 	private issues: YouTrackIssue[] = [];
 	private page = 0;
 	private readonly pageSize = 10;
+	private hasSearched = false;
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
 	private loadingIndicator: HTMLElement;
@@ -27,6 +28,11 @@ export default class YouTrackSearchModal extends Modal {
 			.setPlaceholder("Enter YouTrack query")
 			.onChange(value => (this.query = value));
 		searchInput.inputEl.addClass("youtrack-input");
+		searchInput.inputEl.addEventListener("keypress", e => {
+			if (e.key === "Enter") {
+				void this.search();
+			}
+		});
 
 		const searchButton = searchContainer.createEl("button", {
 			text: "Search",
@@ -44,7 +50,7 @@ export default class YouTrackSearchModal extends Modal {
 		this.resultsEl = contentEl.createDiv({ cls: "youtrack-results-container" });
 		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
 
-		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container" });
+		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
 		const prevButton = paginationContainer.createEl("button", { text: "Previous", cls: "youtrack-prev-button" });
 		const nextButton = paginationContainer.createEl("button", { text: "Next", cls: "youtrack-next-button" });
 
@@ -65,6 +71,12 @@ export default class YouTrackSearchModal extends Modal {
 		this.loadingIndicator.classList.add("visible");
 		this.resultsEl.empty();
 		this.statusEl.setText("");
+
+		if (!this.hasSearched) {
+			this.hasSearched = true;
+			const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
+			paginationContainer?.classList.remove("hidden");
+		}
 
 		try {
 			const results = (await this.plugin.searchIssues(

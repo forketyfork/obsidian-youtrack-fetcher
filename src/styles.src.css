@@ -55,3 +55,39 @@
 		transform: rotate(360deg);
 	}
 }
+
+.youtrack-search-container {
+	display: flex;
+	align-items: center;
+	margin-bottom: 1em;
+}
+
+.youtrack-input {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: var(--radius-s);
+}
+
+.youtrack-search-container .youtrack-input {
+	flex-grow: 1;
+	margin-right: 0.5em;
+}
+
+.youtrack-pagination-container.hidden {
+	display: none;
+}
+
+.youtrack-results-table {
+	width: 100%;
+	margin-top: 1em;
+}
+
+.youtrack-results-table th,
+.youtrack-results-table td {
+	padding: 0.5em;
+	text-align: left;
+}
+
+.youtrack-results-table td:first-child {
+	white-space: nowrap;
+}
