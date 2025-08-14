@@ -2,11 +2,13 @@ import { AbstractInputSuggest } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
 
 export class QuerySuggest extends AbstractInputSuggest<string> {
+	private myInputEl: HTMLInputElement;
 	constructor(
 		private plugin: YouTrackPlugin,
 		inputEl: HTMLInputElement
 	) {
 		super(plugin.app, inputEl);
+		this.myInputEl = inputEl;
 	}
 
 	getSuggestions(inputStr: string): string[] {
@@ -20,6 +22,7 @@ export class QuerySuggest extends AbstractInputSuggest<string> {
 
 	selectSuggestion(suggestion: string): void {
 		this.setValue(suggestion);
+		this.myInputEl.dispatchEvent(new Event("input"));
 		this.close();
 	}
 }

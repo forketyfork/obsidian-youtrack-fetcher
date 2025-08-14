@@ -145,7 +145,7 @@ export default class YouTrackSearchModal extends Modal {
 
 			const existingFile = this.getExistingFile(issue.idReadable);
 			if (existingFile) {
-				const actionLink = actionCell.createEl("a");
+				const actionLink = actionCell.createEl("a", { cls: "youtrack-action-link" });
 				setIcon(actionLink, "share");
 				actionLink.addEventListener("click", () => {
 					void this.app.workspace.getLeaf().openFile(existingFile);

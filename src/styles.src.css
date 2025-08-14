@@ -112,3 +112,9 @@
 .youtrack-results-table td a {
 	cursor: pointer;
 }
+
+.youtrack-action-link {
+	display: inline-flex;
+	justify-content: center;
+	width: 100%;
+}
