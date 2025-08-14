@@ -60,10 +60,17 @@ export default class YouTrackSearchModal extends Modal {
 		});
 
 		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
-		const firstButton = paginationContainer.createEl("button", { text: "<<" });
-		const prevButton = paginationContainer.createEl("button", { text: "<" });
-		const nextButton = paginationContainer.createEl("button", { text: ">" });
-		const lastButton = paginationContainer.createEl("button", { text: ">>" });
+		const firstButton = paginationContainer.createEl("button");
+		setIcon(firstButton, "chevrons-left");
+		const prevButton = paginationContainer.createEl("button");
+		setIcon(prevButton, "chevron-left");
+
+		paginationContainer.createSpan({ cls: "youtrack-page-display" });
+
+		const nextButton = paginationContainer.createEl("button");
+		setIcon(nextButton, "chevron-right");
+		const lastButton = paginationContainer.createEl("button");
+		setIcon(lastButton, "chevrons-right");
 
 		firstButton.addClass("youtrack-first-button");
 		prevButton.addClass("youtrack-prev-button");
@@ -186,8 +193,13 @@ export default class YouTrackSearchModal extends Modal {
 		const prevButton = this.contentEl.querySelector(".youtrack-prev-button") as HTMLButtonElement;
 		const nextButton = this.contentEl.querySelector(".youtrack-next-button") as HTMLButtonElement;
 		const lastButton = this.contentEl.querySelector(".youtrack-last-button") as HTMLButtonElement;
+		const pageDisplay = this.contentEl.querySelector(".youtrack-page-display") as HTMLSpanElement;
 
-		const lastPage = Math.ceil(this.totalIssues / this.pageSize) - 1;
+		const lastPage = Math.max(0, Math.ceil(this.totalIssues / this.pageSize) - 1);
+
+		if (pageDisplay) {
+			pageDisplay.setText(`${this.page + 1} of ${lastPage + 1}`);
+		}
 
 		if (firstButton) firstButton.disabled = this.page === 0;
 		if (prevButton) prevButton.disabled = this.page === 0;

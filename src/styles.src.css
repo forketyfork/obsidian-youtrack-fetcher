@@ -88,6 +88,16 @@
 	margin-top: 1em;
 }
 
+.youtrack-results-container {
+	min-height: 300px;
+}
+
+.youtrack-page-display {
+	margin: 0 0.5em;
+	display: flex;
+	align-items: center;
+}
+
 .youtrack-results-table th,
 .youtrack-results-table td {
 	padding: 0.5em;
