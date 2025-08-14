@@ -256,8 +256,7 @@ export default class YouTrackPlugin extends Plugin {
 			throw new Error("YouTrack URL is not set in plugin settings");
 		}
 
-		const encodedQuery = encodeURIComponent(query);
-		const apiUrl = `${this.settings.youtrackUrl}/api/issues/count?query=${encodedQuery}`;
+		const apiUrl = `${this.settings.youtrackUrl}/api/issuesGetter/count?fields=count`;
 
 		const headers: Record<string, string> = {
 			Accept: "application/json",
@@ -271,8 +270,9 @@ export default class YouTrackPlugin extends Plugin {
 		try {
 			const response = await requestUrl({
 				url: apiUrl,
-				method: "GET",
+				method: "POST",
 				headers,
+				body: JSON.stringify({ query }),
 			});
 
 			if (response.status !== 200) {

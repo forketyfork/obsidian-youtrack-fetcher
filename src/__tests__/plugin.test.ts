@@ -58,4 +58,34 @@ describe("YouTrackPlugin", () => {
 			);
 		});
 	});
+
+	describe("getIssuesCount", () => {
+		it("should return issue count on successful API call", async () => {
+			(requestUrl as jest.Mock).mockResolvedValue({
+				status: 200,
+				json: Promise.resolve({ count: 42 }),
+			});
+
+			const result = await plugin.getIssuesCount("test query");
+			expect(result).toBe(42);
+			expect(requestUrl).toHaveBeenCalledWith(
+				expect.objectContaining({
+					url: "https://youtrack.jetbrains.com/api/issuesGetter/count?fields=count",
+					method: "POST",
+					body: JSON.stringify({ query: "test query" }),
+				})
+			);
+		});
+
+		it("should throw an error on API failure", async () => {
+			(requestUrl as jest.Mock).mockResolvedValue({
+				status: 500,
+				text: "Internal Server Error",
+			});
+
+			await expect(plugin.getIssuesCount("test query")).rejects.toThrow(
+				"Error getting issues count: Internal Server Error (500)"
+			);
+		});
+	});
 });
