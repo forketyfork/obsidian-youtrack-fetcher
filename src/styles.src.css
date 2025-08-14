@@ -88,6 +88,14 @@
 	text-align: left;
 }
 
-.youtrack-results-table td:first-child {
+.youtrack-results-table td:first-child,
+.youtrack-results-table td:nth-child(3) {
 	white-space: nowrap;
+}
+
+.youtrack-help-button {
+	margin-left: 0.5em;
+	display: flex;
+	align-items: center;
+	color: var(--text-muted);
 }

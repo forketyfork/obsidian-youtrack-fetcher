@@ -1,4 +1,4 @@
-import { App, Modal, TextComponent } from "obsidian";
+import { App, Modal, Platform, setIcon, TextComponent, TFile } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
 import { YouTrackIssue } from "./YouTrackPlugin";
 
@@ -7,7 +7,7 @@ export default class YouTrackSearchModal extends Modal {
 	private query: string;
 	private issues: YouTrackIssue[] = [];
 	private page = 0;
-	private readonly pageSize = 10;
+	private readonly pageSize: number;
 	private hasSearched = false;
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
@@ -16,6 +16,7 @@ export default class YouTrackSearchModal extends Modal {
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
 		this.plugin = plugin;
+		this.pageSize = Platform.isMobile ? 5 : 10;
 	}
 
 	onOpen() {
@@ -41,6 +42,13 @@ export default class YouTrackSearchModal extends Modal {
 		searchButton.addEventListener("click", () => {
 			void this.search();
 		});
+
+		const helpButton = searchContainer.createEl("a", {
+			cls: "youtrack-help-button",
+			href: "https://www.jetbrains.com/help/youtrack/server/sample-search-queries.html",
+		});
+		helpButton.setAttr("target", "_blank");
+		setIcon(helpButton, "help-circle");
 
 		this.loadingIndicator = contentEl.createEl("div", {
 			cls: "youtrack-loading",
@@ -114,7 +122,13 @@ export default class YouTrackSearchModal extends Modal {
 		const tbody = table.createEl("tbody");
 		for (const issue of this.issues) {
 			const row = tbody.createEl("tr");
-			row.createEl("td", { text: issue.idReadable });
+
+			const issueLink = row.createEl("td").createEl("a", {
+				text: issue.idReadable,
+				href: `${this.plugin.settings.youtrackUrl}/issue/${issue.idReadable}`,
+			});
+			issueLink.setAttr("target", "_blank");
+
 			row.createEl("td", { text: issue.summary });
 
 			const stateField = issue.customFields.find(
@@ -122,10 +136,22 @@ export default class YouTrackSearchModal extends Modal {
 			);
 			row.createEl("td", { text: stateField?.value?.name ?? "N/A" });
 
-			const importButton = row.createEl("td").createEl("button", { text: "Import" });
-			importButton.addEventListener("click", () => {
-				void this.importIssue(issue.idReadable);
-			});
+			const actionCell = row.createEl("td");
+			const actionButton = actionCell.createEl("button");
+
+			const existingFile = this.getExistingFile(issue.idReadable);
+			if (existingFile) {
+				setIcon(actionButton, "share");
+				actionButton.addEventListener("click", () => {
+					void this.app.workspace.getLeaf().openFile(existingFile);
+					this.close();
+				});
+			} else {
+				setIcon(actionButton, "download");
+				actionButton.addEventListener("click", () => {
+					void this.importIssue(issue.idReadable);
+				});
+			}
 		}
 
 		this.updatePaginationButtons();
@@ -161,5 +187,12 @@ export default class YouTrackSearchModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+	}
+
+	private getExistingFile(issueId: string): TFile | null {
+		const folderPath = this.plugin.settings.notesFolder || "";
+		const fileName = `${folderPath ? `${folderPath}/` : ""}${issueId}.md`;
+		const file = this.app.vault.getAbstractFileByPath(fileName);
+		return file instanceof TFile ? file : null;
 	}
 }
