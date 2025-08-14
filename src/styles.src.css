@@ -26,30 +26,6 @@
 	margin-top: 0.5rem;
 }
 
-.youtrack-loading {
-	display: flex;
-	align-items: center;
-	margin-top: 0.5rem;
-	color: var(--text-muted);
-	display: none;
-}
-
-.youtrack-loading.visible {
-	display: block;
-}
-
-.youtrack-loading::before {
-	content: "";
-	display: inline-block;
-	width: 1em;
-	height: 1em;
-	margin-right: 0.5em;
-	border: 2px solid currentColor;
-	border-radius: 50%;
-	border-right-color: transparent;
-	animation: youtrack-spinner 0.75s linear infinite;
-}
-
 @keyframes youtrack-spinner {
 	to {
 		transform: rotate(360deg);
@@ -134,4 +110,24 @@
 	display: inline-flex;
 	justify-content: center;
 	width: 100%;
+}
+
+.search-button.is-loading {
+	position: relative;
+	color: transparent !important;
+}
+
+.search-button.is-loading::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 2px solid var(--text-on-accent);
+	border-radius: 50%;
+	border-right-color: transparent;
+	animation: youtrack-spinner 0.75s linear infinite;
 }

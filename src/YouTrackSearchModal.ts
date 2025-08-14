@@ -13,7 +13,7 @@ export default class YouTrackSearchModal extends Modal {
 	private totalIssues = 0;
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
-	private loadingIndicator: HTMLElement;
+	private searchButtonEl: HTMLButtonElement;
 
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
@@ -39,11 +39,11 @@ export default class YouTrackSearchModal extends Modal {
 			}
 		});
 
-		const searchButton = searchContainer.createEl("button", {
+		this.searchButtonEl = searchContainer.createEl("button", {
 			text: "Search",
-			cls: "mod-cta",
+			cls: "mod-cta search-button",
 		});
-		searchButton.addEventListener("click", () => {
+		this.searchButtonEl.addEventListener("click", () => {
 			void this.search(true);
 		});
 
@@ -53,11 +53,6 @@ export default class YouTrackSearchModal extends Modal {
 		});
 		helpButton.setAttr("target", "_blank");
 		setIcon(helpButton, "help-circle");
-
-		this.loadingIndicator = contentEl.createEl("div", {
-			cls: "youtrack-loading",
-			text: "Searching...",
-		});
 
 		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
 		const firstButton = paginationContainer.createEl("button");
@@ -105,7 +100,8 @@ export default class YouTrackSearchModal extends Modal {
 			this.addQueryToHistory(this.query);
 		}
 
-		this.loadingIndicator.classList.add("visible");
+		this.searchButtonEl.disabled = true;
+		this.searchButtonEl.classList.add("is-loading");
 		this.resultsEl.empty();
 		this.statusEl.setText("");
 
@@ -129,7 +125,8 @@ export default class YouTrackSearchModal extends Modal {
 			const errorMessage = error instanceof Error ? error.message : String(error);
 			this.statusEl.setText(`Error: ${errorMessage}`);
 		} finally {
-			this.loadingIndicator.classList.remove("visible");
+			this.searchButtonEl.disabled = false;
+			this.searchButtonEl.classList.remove("is-loading");
 		}
 	}
 
