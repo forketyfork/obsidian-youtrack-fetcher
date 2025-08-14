@@ -251,6 +251,42 @@ export default class YouTrackPlugin extends Plugin {
 		}
 	}
 
+	async getIssuesCount(query: string): Promise<number> {
+		if (!this.settings.youtrackUrl) {
+			throw new Error("YouTrack URL is not set in plugin settings");
+		}
+
+		const encodedQuery = encodeURIComponent(query);
+		const apiUrl = `${this.settings.youtrackUrl}/api/issues/count?query=${encodedQuery}`;
+
+		const headers: Record<string, string> = {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		};
+
+		if (this.settings.useApiToken && this.settings.apiToken) {
+			headers["Authorization"] = `Bearer ${this.settings.apiToken}`;
+		}
+
+		try {
+			const response = await requestUrl({
+				url: apiUrl,
+				method: "GET",
+				headers,
+			});
+
+			if (response.status !== 200) {
+				throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+			}
+
+			const data = (await response.json) as { count: number };
+			return data.count;
+		} catch (error) {
+			console.error("Error getting YouTrack issues count:", error);
+			throw error;
+		}
+	}
+
 	parseIssueId(input: string): string | null {
 		const trimmed = input.trim();
 		if (!trimmed) return null;

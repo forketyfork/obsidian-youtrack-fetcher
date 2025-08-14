@@ -77,6 +77,12 @@
 	display: none;
 }
 
+.youtrack-pagination-container {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 1em;
+}
+
 .youtrack-results-table {
 	width: 100%;
 	margin-top: 1em;

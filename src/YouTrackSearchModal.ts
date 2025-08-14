@@ -10,6 +10,7 @@ export default class YouTrackSearchModal extends Modal {
 	private page = 0;
 	private readonly pageSize: number;
 	private hasSearched = false;
+	private totalIssues = 0;
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
 	private loadingIndicator: HTMLElement;
@@ -34,7 +35,7 @@ export default class YouTrackSearchModal extends Modal {
 		new QuerySuggest(this.plugin, searchInput.inputEl);
 		searchInput.inputEl.addEventListener("keypress", e => {
 			if (e.key === "Enter") {
-				void this.search();
+				void this.search(true);
 			}
 		});
 
@@ -43,7 +44,7 @@ export default class YouTrackSearchModal extends Modal {
 			cls: "mod-cta",
 		});
 		searchButton.addEventListener("click", () => {
-			void this.search();
+			void this.search(true);
 		});
 
 		const helpButton = searchContainer.createEl("a", {
@@ -58,37 +59,54 @@ export default class YouTrackSearchModal extends Modal {
 			text: "Searching...",
 		});
 
-		this.resultsEl = contentEl.createDiv({ cls: "youtrack-results-container" });
-		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
-
 		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
-		const prevButton = paginationContainer.createEl("button", { text: "Previous", cls: "youtrack-prev-button" });
-		const nextButton = paginationContainer.createEl("button", { text: "Next", cls: "youtrack-next-button" });
+		const firstButton = paginationContainer.createEl("button", { text: "<<" });
+		const prevButton = paginationContainer.createEl("button", { text: "<" });
+		const nextButton = paginationContainer.createEl("button", { text: ">" });
+		const lastButton = paginationContainer.createEl("button", { text: ">>" });
 
+		firstButton.addClass("youtrack-first-button");
+		prevButton.addClass("youtrack-prev-button");
+		nextButton.addClass("youtrack-next-button");
+		lastButton.addClass("youtrack-last-button");
+
+		firstButton.addEventListener("click", () => {
+			void this.goToFirstPage();
+		});
 		prevButton.addEventListener("click", () => {
 			void this.changePage(-1);
 		});
 		nextButton.addEventListener("click", () => {
 			void this.changePage(1);
 		});
+		lastButton.addEventListener("click", () => {
+			void this.goToLastPage();
+		});
+
+		this.resultsEl = contentEl.createDiv({ cls: "youtrack-results-container" });
+		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
 	}
 
-	private async search() {
+	private async search(isNewSearch = false) {
 		if (!this.query) {
 			this.statusEl.setText("Please enter a search query.");
 			return;
 		}
 
-		this.addQueryToHistory(this.query);
+		if (isNewSearch) {
+			this.page = 0;
+			this.addQueryToHistory(this.query);
+		}
 
 		this.loadingIndicator.classList.add("visible");
 		this.resultsEl.empty();
 		this.statusEl.setText("");
 
-		if (!this.hasSearched) {
+		if (isNewSearch || !this.hasSearched) {
 			this.hasSearched = true;
 			const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
 			paginationContainer?.classList.remove("hidden");
+			this.totalIssues = await this.plugin.getIssuesCount(this.query);
 		}
 
 		try {
@@ -164,20 +182,32 @@ export default class YouTrackSearchModal extends Modal {
 	}
 
 	private updatePaginationButtons() {
+		const firstButton = this.contentEl.querySelector(".youtrack-first-button") as HTMLButtonElement;
 		const prevButton = this.contentEl.querySelector(".youtrack-prev-button") as HTMLButtonElement;
 		const nextButton = this.contentEl.querySelector(".youtrack-next-button") as HTMLButtonElement;
+		const lastButton = this.contentEl.querySelector(".youtrack-last-button") as HTMLButtonElement;
 
-		if (prevButton) {
-			prevButton.disabled = this.page === 0;
-		}
-		if (nextButton) {
-			nextButton.disabled = this.issues.length < this.pageSize;
-		}
+		const lastPage = Math.ceil(this.totalIssues / this.pageSize) - 1;
+
+		if (firstButton) firstButton.disabled = this.page === 0;
+		if (prevButton) prevButton.disabled = this.page === 0;
+		if (nextButton) nextButton.disabled = this.page >= lastPage;
+		if (lastButton) lastButton.disabled = this.page >= lastPage;
 	}
 
 	private async changePage(delta: number) {
 		this.page += delta;
-		await this.search();
+		await this.search(false);
+	}
+
+	private async goToFirstPage() {
+		this.page = 0;
+		await this.search(false);
+	}
+
+	private async goToLastPage() {
+		this.page = Math.ceil(this.totalIssues / this.pageSize) - 1;
+		await this.search(false);
 	}
 
 	private async importIssue(issueId: string) {
