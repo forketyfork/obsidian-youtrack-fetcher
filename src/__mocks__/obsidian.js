@@ -79,4 +79,9 @@ module.exports = {
 			status: 200,
 			json: {},
 		}),
+	Notice: class Notice {
+		constructor(message) {
+			this.message = message;
+		}
+	},
 };

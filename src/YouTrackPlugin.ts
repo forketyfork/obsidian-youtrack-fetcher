@@ -1,27 +1,10 @@
-import { Plugin, TFile, normalizePath, requestUrl } from "obsidian";
+import { Plugin, TFile, normalizePath, requestUrl, Notice } from "obsidian";
 import _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
 import YouTrackSearchModal from "./YouTrackSearchModal";
-interface YouTrackPluginSettings {
-	youtrackUrl: string;
-	apiToken: string;
-	useApiToken: boolean;
-	notesFolder: string;
-	templatePath: string;
-	queryHistory: string[];
-}
-
-export interface YouTrackIssue {
-	idReadable: string;
-	summary: string;
-	customFields: {
-		name: string;
-		value: {
-			name: string;
-		};
-	}[];
-}
+import { YouTrackPluginSettings } from "./types/YouTrackTypes";
+export type { YouTrackIssue } from "./types/YouTrackTypes";
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	youtrackUrl: "https://youtrack.jetbrains.com",
@@ -247,6 +230,7 @@ export default class YouTrackPlugin extends Plugin {
 			return await response.json;
 		} catch (error) {
 			console.error("Error searching YouTrack issues:", error);
+			new Notice(`Failed to search issues: ${error}`);
 			throw error;
 		}
 	}

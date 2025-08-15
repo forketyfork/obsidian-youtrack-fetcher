@@ -1,6 +1,6 @@
 import { App, Modal, Platform, setIcon, TextComponent, TFile } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
-import { YouTrackIssue } from "./YouTrackPlugin";
+import { YouTrackIssue } from "./types/YouTrackTypes";
 import { QuerySuggest } from "./QuerySuggest";
 
 export default class YouTrackSearchModal extends Modal {
@@ -109,7 +109,17 @@ export default class YouTrackSearchModal extends Modal {
 			this.hasSearched = true;
 			const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
 			paginationContainer?.classList.remove("hidden");
-			this.totalIssues = await this.plugin.getIssuesCount(this.query);
+			this.statusEl.setText("Fetching total issues count...");
+			try {
+				this.totalIssues = await this.plugin.getIssuesCount(this.query);
+				this.statusEl.setText("");
+			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : String(error);
+				this.statusEl.setText(`Error getting issues count: ${errorMessage}`);
+				this.searchButtonEl.disabled = false;
+				this.searchButtonEl.classList.remove("is-loading");
+				return;
+			}
 		}
 
 		try {

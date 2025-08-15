@@ -28,7 +28,7 @@
 
 @keyframes youtrack-spinner {
 	to {
-		transform: rotate(360deg);
+		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }
 
@@ -122,7 +122,7 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%) rotate(0deg);
 	display: inline-block;
 	width: 1em;
 	height: 1em;
