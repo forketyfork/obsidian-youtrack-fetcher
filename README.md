@@ -17,6 +17,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 - Use `${field}` placeholders in templates to insert values from fetched fields
 - Fields to fetch are parsed from your template automatically
 - You can specify arbitrarily nested fields, e.g., `${project.team.name}`
+- Search for issues using YouTrack query language and import them from a paginated list
 
 ## Installation
 
@@ -45,6 +46,10 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 4. Enter the issue ID or paste the full issue URL
 5. Click "Fetch Issue" to create a note based on the issue data
    ![fetched issue](images/fetched.png "Fetched Issue")
+
+Alternatively, you can use the "Search YouTrack issues" command to open a search modal. Here you can enter a YouTrack query to search for issues. The results are paginated, and you can import any issue from the list.
+
+[TODO: Add screenshot of the search modal]
 
 ## Note Format
 

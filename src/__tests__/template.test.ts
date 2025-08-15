@@ -22,6 +22,7 @@ describe("YouTrackPlugin Template Rendering", () => {
 				useApiToken: false,
 				notesFolder: "",
 				templatePath: "",
+				queryHistory: [],
 			};
 
 			// Sample YouTrack issue data
@@ -84,6 +85,7 @@ Description of the issue
 				useApiToken: false,
 				notesFolder: "",
 				templatePath: "",
+				queryHistory: [],
 			};
 
 			const issueData = {
@@ -119,6 +121,7 @@ Description: Test Description`;
 				useApiToken: false,
 				notesFolder: "",
 				templatePath: "",
+				queryHistory: [],
 			};
 
 			const issueData = {
@@ -153,6 +156,7 @@ Description: Test Description`;
 				useApiToken: false,
 				notesFolder: "",
 				templatePath: "",
+				queryHistory: [],
 			};
 
 			const issueData = {
@@ -183,6 +187,7 @@ Description: Test Description`;
 				useApiToken: false,
 				notesFolder: "",
 				templatePath: "",
+				queryHistory: [],
 			};
 
 			const template = "ID: ${id}\nResolved: ${resolved}\nSummary: ${summary}\nTitle: ${title}";
