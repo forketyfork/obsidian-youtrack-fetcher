@@ -62,11 +62,13 @@
 .youtrack-results-table {
 	width: 100%;
 	margin-top: 1em;
+	table-layout: fixed;
 }
 
 .youtrack-results-container {
 	height: 300px;
 	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .youtrack-page-display {
@@ -79,11 +81,111 @@
 .youtrack-results-table td {
 	padding: 0.5em;
 	text-align: left;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
-.youtrack-results-table td:first-child,
+.youtrack-results-table th:nth-child(1),
+.youtrack-results-table td:nth-child(1) {
+	width: 15%;
+	min-width: 80px;
+}
+
+.youtrack-results-table th:nth-child(2),
+.youtrack-results-table td:nth-child(2) {
+	width: 50%;
+}
+
+.youtrack-results-table th:nth-child(3),
 .youtrack-results-table td:nth-child(3) {
-	white-space: nowrap;
+	width: 20%;
+	min-width: 60px;
+}
+
+.youtrack-results-table th:nth-child(4),
+.youtrack-results-table td:nth-child(4) {
+	width: 15%;
+	min-width: 50px;
+	text-align: center;
+}
+
+@media (max-width: 600px) {
+	.youtrack-results-table {
+		display: block;
+		border: none;
+	}
+
+	.youtrack-results-table thead {
+		display: none;
+	}
+
+	.youtrack-results-table tbody {
+		display: block;
+	}
+
+	.youtrack-results-table tr {
+		display: block;
+		margin-bottom: 1em;
+		padding: 0.5em;
+		border: 1px solid var(--background-modifier-border);
+		border-radius: var(--radius-s);
+		background: var(--background-secondary);
+	}
+
+	.youtrack-results-table td {
+		display: block;
+		padding: 0.125em 0;
+		border: none;
+		text-align: left;
+		width: 100% !important;
+		min-width: unset !important;
+	}
+
+	.youtrack-results-table td:nth-child(1),
+	.youtrack-results-table td:nth-child(2) {
+		padding-left: 0;
+	}
+
+	.youtrack-results-table td:before {
+		content: attr(data-label);
+		font-weight: var(--font-weight);
+		color: var(--text-muted);
+		display: inline-block;
+		min-width: 60px;
+		margin-right: 0.5em;
+	}
+
+	.youtrack-results-table td:nth-child(1):before,
+	.youtrack-results-table td:nth-child(2):before {
+		display: none;
+	}
+
+	.youtrack-results-table td:nth-child(3),
+	.youtrack-results-table td:nth-child(4) {
+		display: flex;
+		align-items: center;
+		margin-top: 0.25em;
+		padding-top: 0.25em;
+		border-top: 1px solid var(--background-modifier-border);
+	}
+
+	.youtrack-results-table td:nth-child(3):before,
+	.youtrack-results-table td:nth-child(4):before {
+		flex-shrink: 0;
+	}
+
+	.youtrack-results-table td:nth-child(4) {
+		justify-content: center;
+	}
+
+	.youtrack-results-table td:nth-child(4) button,
+	.youtrack-results-table td:nth-child(4) a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 32px;
+		min-height: 32px;
+	}
 }
 
 .youtrack-help-button {
