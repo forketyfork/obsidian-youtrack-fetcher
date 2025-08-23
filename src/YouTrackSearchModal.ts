@@ -1,4 +1,4 @@
-import { App, Modal, Platform, setIcon, TextComponent, TFile } from "obsidian";
+import { App, Modal, Platform, setIcon, TextComponent, TFile, normalizePath } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
 import { YouTrackIssue } from "./types/YouTrackTypes";
 import { QuerySuggest } from "./QuerySuggest";
@@ -13,6 +13,19 @@ export default class YouTrackSearchModal extends Modal {
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
 	private searchButtonEl: HTMLButtonElement;
+	private firstButtonEl: HTMLButtonElement;
+	private prevButtonEl: HTMLButtonElement;
+	private nextButtonEl: HTMLButtonElement;
+	private lastButtonEl: HTMLButtonElement;
+	private pageDisplayEl: HTMLSpanElement;
+
+	// Event listeners for cleanup
+	private keyPressHandler: (e: KeyboardEvent) => void;
+	private searchClickHandler: () => void;
+	private firstClickHandler: () => void;
+	private prevClickHandler: () => void;
+	private nextClickHandler: () => void;
+	private lastClickHandler: () => void;
 
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
@@ -32,19 +45,23 @@ export default class YouTrackSearchModal extends Modal {
 			.onChange(value => (this.query = value));
 		searchInput.inputEl.addClass("youtrack-input");
 		new QuerySuggest(this.plugin, searchInput.inputEl);
-		searchInput.inputEl.addEventListener("keypress", e => {
+		// Store event handlers for cleanup
+		this.keyPressHandler = e => {
 			if (e.key === "Enter") {
 				void this.search(true);
 			}
-		});
+		};
+		this.searchClickHandler = () => {
+			void this.search(true);
+		};
+
+		searchInput.inputEl.addEventListener("keypress", this.keyPressHandler);
 
 		this.searchButtonEl = searchContainer.createEl("button", {
 			text: "Search",
-			cls: "mod-cta search-button",
+			cls: "mod-cta youtrack-fetcher-search-button",
 		});
-		this.searchButtonEl.addEventListener("click", () => {
-			void this.search(true);
-		});
+		this.searchButtonEl.addEventListener("click", this.searchClickHandler);
 
 		const helpButton = searchContainer.createEl("a", {
 			cls: "youtrack-help-button",
@@ -54,35 +71,41 @@ export default class YouTrackSearchModal extends Modal {
 		setIcon(helpButton, "help-circle");
 
 		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
-		const firstButton = paginationContainer.createEl("button");
-		setIcon(firstButton, "chevrons-left");
-		const prevButton = paginationContainer.createEl("button");
-		setIcon(prevButton, "chevron-left");
+		this.firstButtonEl = paginationContainer.createEl("button");
+		setIcon(this.firstButtonEl, "chevrons-left");
+		this.prevButtonEl = paginationContainer.createEl("button");
+		setIcon(this.prevButtonEl, "chevron-left");
 
-		paginationContainer.createSpan({ cls: "youtrack-page-display" });
+		this.pageDisplayEl = paginationContainer.createSpan({ cls: "youtrack-page-display" });
 
-		const nextButton = paginationContainer.createEl("button");
-		setIcon(nextButton, "chevron-right");
-		const lastButton = paginationContainer.createEl("button");
-		setIcon(lastButton, "chevrons-right");
+		this.nextButtonEl = paginationContainer.createEl("button");
+		setIcon(this.nextButtonEl, "chevron-right");
+		this.lastButtonEl = paginationContainer.createEl("button");
+		setIcon(this.lastButtonEl, "chevrons-right");
 
-		firstButton.addClass("youtrack-first-button");
-		prevButton.addClass("youtrack-prev-button");
-		nextButton.addClass("youtrack-next-button");
-		lastButton.addClass("youtrack-last-button");
+		this.firstButtonEl.addClass("youtrack-first-button");
+		this.prevButtonEl.addClass("youtrack-prev-button");
+		this.nextButtonEl.addClass("youtrack-next-button");
+		this.lastButtonEl.addClass("youtrack-last-button");
 
-		firstButton.addEventListener("click", () => {
+		// Store event handlers for cleanup
+		this.firstClickHandler = () => {
 			void this.goToFirstPage();
-		});
-		prevButton.addEventListener("click", () => {
+		};
+		this.prevClickHandler = () => {
 			void this.changePage(-1);
-		});
-		nextButton.addEventListener("click", () => {
+		};
+		this.nextClickHandler = () => {
 			void this.changePage(1);
-		});
-		lastButton.addEventListener("click", () => {
+		};
+		this.lastClickHandler = () => {
 			void this.goToLastPage();
-		});
+		};
+
+		this.firstButtonEl.addEventListener("click", this.firstClickHandler);
+		this.prevButtonEl.addEventListener("click", this.prevClickHandler);
+		this.nextButtonEl.addEventListener("click", this.nextClickHandler);
+		this.lastButtonEl.addEventListener("click", this.lastClickHandler);
 
 		this.resultsEl = contentEl.createDiv({ cls: "youtrack-results-container" });
 		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
@@ -96,7 +119,7 @@ export default class YouTrackSearchModal extends Modal {
 
 		if (isNewSearch) {
 			this.page = 0;
-			this.addQueryToHistory(this.query);
+			void this.addQueryToHistory(this.query);
 			// Reset totalIssues to ensure we fetch fresh count for new searches
 			this.totalIssues = 0;
 		}
@@ -197,22 +220,16 @@ export default class YouTrackSearchModal extends Modal {
 	}
 
 	private updatePaginationButtons() {
-		const firstButton = this.contentEl.querySelector(".youtrack-first-button") as HTMLButtonElement;
-		const prevButton = this.contentEl.querySelector(".youtrack-prev-button") as HTMLButtonElement;
-		const nextButton = this.contentEl.querySelector(".youtrack-next-button") as HTMLButtonElement;
-		const lastButton = this.contentEl.querySelector(".youtrack-last-button") as HTMLButtonElement;
-		const pageDisplay = this.contentEl.querySelector(".youtrack-page-display") as HTMLSpanElement;
-
 		const lastPage = Math.max(0, Math.ceil(this.totalIssues / this.pageSize) - 1);
 
-		if (pageDisplay) {
-			pageDisplay.setText(`${this.page + 1} of ${lastPage + 1}`);
+		if (this.pageDisplayEl) {
+			this.pageDisplayEl.setText(`${this.page + 1} of ${lastPage + 1}`);
 		}
 
-		if (firstButton) firstButton.disabled = this.page === 0;
-		if (prevButton) prevButton.disabled = this.page === 0;
-		if (nextButton) nextButton.disabled = this.page >= lastPage;
-		if (lastButton) lastButton.disabled = this.page >= lastPage;
+		if (this.firstButtonEl) this.firstButtonEl.disabled = this.page === 0;
+		if (this.prevButtonEl) this.prevButtonEl.disabled = this.page === 0;
+		if (this.nextButtonEl) this.nextButtonEl.disabled = this.page >= lastPage;
+		if (this.lastButtonEl) this.lastButtonEl.disabled = this.page >= lastPage;
 	}
 
 	private async changePage(delta: number) {
@@ -241,18 +258,41 @@ export default class YouTrackSearchModal extends Modal {
 	}
 
 	onClose() {
+		// Remove event listeners to prevent memory leaks
+		const searchInput = this.contentEl.querySelector(".youtrack-input") as HTMLInputElement;
+		if (searchInput && this.keyPressHandler) {
+			searchInput.removeEventListener("keypress", this.keyPressHandler);
+		}
+
+		if (this.searchButtonEl && this.searchClickHandler) {
+			this.searchButtonEl.removeEventListener("click", this.searchClickHandler);
+		}
+
+		if (this.firstButtonEl && this.firstClickHandler) {
+			this.firstButtonEl.removeEventListener("click", this.firstClickHandler);
+		}
+		if (this.prevButtonEl && this.prevClickHandler) {
+			this.prevButtonEl.removeEventListener("click", this.prevClickHandler);
+		}
+		if (this.nextButtonEl && this.nextClickHandler) {
+			this.nextButtonEl.removeEventListener("click", this.nextClickHandler);
+		}
+		if (this.lastButtonEl && this.lastClickHandler) {
+			this.lastButtonEl.removeEventListener("click", this.lastClickHandler);
+		}
+
 		const { contentEl } = this;
 		contentEl.empty();
 	}
 
 	private getExistingFile(issueId: string): TFile | null {
 		const folderPath = this.plugin.settings.notesFolder || "";
-		const fileName = `${folderPath ? `${folderPath}/` : ""}${issueId}.md`;
+		const fileName = normalizePath(`${folderPath ? `${folderPath}/` : ""}${issueId}.md`);
 		const file = this.app.vault.getAbstractFileByPath(fileName);
 		return file instanceof TFile ? file : null;
 	}
 
-	private addQueryToHistory(query: string) {
+	private async addQueryToHistory(query: string) {
 		const { settings } = this.plugin;
 		const history = settings.queryHistory || [];
 
@@ -268,6 +308,10 @@ export default class YouTrackSearchModal extends Modal {
 		// Limit the history to the last 10 queries
 		settings.queryHistory = history.slice(0, 10);
 
-		void this.plugin.saveSettings();
+		try {
+			await this.plugin.saveSettings();
+		} catch (error) {
+			console.error("Failed to save query history:", error);
+		}
 	}
 }

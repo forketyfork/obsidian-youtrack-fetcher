@@ -16,7 +16,7 @@
 	border-radius: var(--radius-s);
 }
 
-.error-message {
+.youtrack-fetcher-error-message {
 	color: var(--text-error);
 	margin-top: 0.5rem;
 }
@@ -112,12 +112,12 @@
 	width: 100%;
 }
 
-.search-button.is-loading {
+.youtrack-fetcher-search-button.is-loading {
 	position: relative;
 	color: transparent !important;
 }
 
-.search-button.is-loading::after {
+.youtrack-fetcher-search-button.is-loading::after {
 	content: "";
 	position: absolute;
 	top: 50%;
@@ -130,4 +130,11 @@
 	border-radius: 50%;
 	border-right-color: transparent;
 	animation: youtrack-spinner 0.75s linear infinite;
+}
+
+.youtrack-loading {
+	display: none;
+	text-align: center;
+	margin-top: 1rem;
+	color: var(--text-muted);
 }
