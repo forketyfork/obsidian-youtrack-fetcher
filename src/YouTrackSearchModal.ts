@@ -120,8 +120,6 @@ export default class YouTrackSearchModal extends Modal {
 		if (isNewSearch) {
 			this.page = 0;
 			void this.addQueryToHistory(this.query);
-			// Reset totalIssues to ensure we fetch fresh count for new searches
-			this.totalIssues = 0;
 		}
 
 		this.searchButtonEl.disabled = true;
@@ -131,12 +129,13 @@ export default class YouTrackSearchModal extends Modal {
 
 		// Always fetch total count for new searches
 		if (isNewSearch) {
-			const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
-			paginationContainer?.classList.remove("hidden");
 			this.statusEl.setText("Fetching total issues count...");
 			try {
 				this.totalIssues = await this.plugin.getIssuesCount(this.query);
 				this.statusEl.setText("");
+				// Show pagination container only after we have the total count
+				const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
+				paginationContainer?.classList.remove("hidden");
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : String(error);
 				this.statusEl.setText(`Error getting issues count: ${errorMessage}`);
