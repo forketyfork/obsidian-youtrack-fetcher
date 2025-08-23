@@ -9,7 +9,6 @@ export default class YouTrackSearchModal extends Modal {
 	private issues: YouTrackIssue[] = [];
 	private page = 0;
 	private readonly pageSize: number;
-	private hasSearched = false;
 	private totalIssues = 0;
 	private resultsEl: HTMLElement;
 	private statusEl: HTMLElement;
@@ -98,6 +97,8 @@ export default class YouTrackSearchModal extends Modal {
 		if (isNewSearch) {
 			this.page = 0;
 			this.addQueryToHistory(this.query);
+			// Reset totalIssues to ensure we fetch fresh count for new searches
+			this.totalIssues = 0;
 		}
 
 		this.searchButtonEl.disabled = true;
@@ -105,8 +106,8 @@ export default class YouTrackSearchModal extends Modal {
 		this.resultsEl.empty();
 		this.statusEl.setText("");
 
-		if (isNewSearch || !this.hasSearched) {
-			this.hasSearched = true;
+		// Always fetch total count for new searches
+		if (isNewSearch) {
 			const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
 			paginationContainer?.classList.remove("hidden");
 			this.statusEl.setText("Fetching total issues count...");
