@@ -1,14 +1,10 @@
-import { Plugin, TFile, normalizePath, requestUrl } from "obsidian";
+import { Plugin, TFile, normalizePath, requestUrl, Notice } from "obsidian";
 import _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
-interface YouTrackPluginSettings {
-	youtrackUrl: string;
-	apiToken: string;
-	useApiToken: boolean;
-	notesFolder: string;
-	templatePath: string;
-}
+import YouTrackSearchModal from "./YouTrackSearchModal";
+import { YouTrackPluginSettings } from "./types/YouTrackTypes";
+export type { YouTrackIssue } from "./types/YouTrackTypes";
 
 const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	youtrackUrl: "https://youtrack.jetbrains.com",
@@ -16,6 +12,7 @@ const DEFAULT_SETTINGS: YouTrackPluginSettings = {
 	useApiToken: false,
 	notesFolder: "YouTrack",
 	templatePath: "",
+	queryHistory: [],
 };
 
 const DEFAULT_TEMPLATE = "# ${id}: ${title}\n\nURL: ${url}\n\n## Description\n\n${description}\n";
@@ -49,6 +46,14 @@ export default class YouTrackPlugin extends Plugin {
 
 		this.addRibbonIcon("clipboard-list", "Fetch YouTrack issue", () => {
 			new YouTrackIssueModal(this.app, this).open();
+		});
+
+		this.addCommand({
+			id: "search-youtrack-issues",
+			name: "Search YouTrack issues",
+			callback: () => {
+				new YouTrackSearchModal(this.app, this).open();
+			},
 		});
 	}
 
@@ -188,6 +193,80 @@ export default class YouTrackPlugin extends Plugin {
 			return await response.json;
 		} catch (error) {
 			console.error("Error fetching YouTrack issue:", error);
+			throw error;
+		}
+	}
+
+	async searchIssues(query: string, top: number, skip: number): Promise<unknown> {
+		if (!this.settings.youtrackUrl) {
+			throw new Error("YouTrack URL is not set in plugin settings");
+		}
+
+		const fieldsQuery = "idReadable,summary,customFields(name,value(name))";
+		const encodedQuery = encodeURIComponent(query);
+
+		const apiUrl = `${this.settings.youtrackUrl}/api/issues?query=${encodedQuery}&fields=${fieldsQuery}&$top=${top}&$skip=${skip}`;
+
+		const headers: Record<string, string> = {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		};
+
+		if (this.settings.useApiToken && this.settings.apiToken) {
+			headers["Authorization"] = `Bearer ${this.settings.apiToken}`;
+		}
+
+		try {
+			const response = await requestUrl({
+				url: apiUrl,
+				method: "GET",
+				headers,
+			});
+
+			if (response.status !== 200) {
+				throw new Error(`Error searching issues: ${response.text} (${response.status})`);
+			}
+
+			return await response.json;
+		} catch (error) {
+			console.error("Error searching YouTrack issues:", error);
+			new Notice(`Failed to search issues: ${error}`);
+			throw error;
+		}
+	}
+
+	async getIssuesCount(query: string): Promise<number> {
+		if (!this.settings.youtrackUrl) {
+			throw new Error("YouTrack URL is not set in plugin settings");
+		}
+
+		const apiUrl = `${this.settings.youtrackUrl}/api/issuesGetter/count?fields=count`;
+
+		const headers: Record<string, string> = {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		};
+
+		if (this.settings.useApiToken && this.settings.apiToken) {
+			headers["Authorization"] = `Bearer ${this.settings.apiToken}`;
+		}
+
+		try {
+			const response = await requestUrl({
+				url: apiUrl,
+				method: "POST",
+				headers,
+				body: JSON.stringify({ query }),
+			});
+
+			if (response.status !== 200) {
+				throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+			}
+
+			const data = (await response.json) as { count: number };
+			return data.count;
+		} catch (error) {
+			console.error("Error getting YouTrack issues count:", error);
 			throw error;
 		}
 	}

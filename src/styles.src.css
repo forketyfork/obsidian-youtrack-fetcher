@@ -16,7 +16,7 @@
 	border-radius: var(--radius-s);
 }
 
-.error-message {
+.youtrack-fetcher-error-message {
 	color: var(--text-error);
 	margin-top: 0.5rem;
 }
@@ -26,32 +26,115 @@
 	margin-top: 0.5rem;
 }
 
-.youtrack-loading {
+@keyframes youtrack-spinner {
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+.youtrack-search-container {
 	display: flex;
 	align-items: center;
-	margin-top: 0.5rem;
-	color: var(--text-muted);
+	margin-bottom: 1em;
+}
+
+.youtrack-input {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: var(--radius-s);
+}
+
+.youtrack-search-container .youtrack-input {
+	flex-grow: 1;
+	margin-right: 0.5em;
+}
+
+.youtrack-pagination-container.hidden {
 	display: none;
 }
 
-.youtrack-loading.visible {
-	display: block;
+.youtrack-pagination-container {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 1em;
 }
 
-.youtrack-loading::before {
+.youtrack-results-table {
+	width: 100%;
+	margin-top: 1em;
+}
+
+.youtrack-results-container {
+	height: 300px;
+	overflow-y: auto;
+}
+
+.youtrack-page-display {
+	margin: 0 0.5em;
+	display: flex;
+	align-items: center;
+}
+
+.youtrack-results-table th,
+.youtrack-results-table td {
+	padding: 0.5em;
+	text-align: left;
+}
+
+.youtrack-results-table td:first-child,
+.youtrack-results-table td:nth-child(3) {
+	white-space: nowrap;
+}
+
+.youtrack-help-button {
+	margin-left: 0.5em;
+	display: flex;
+	align-items: center;
+	color: var(--text-muted);
+}
+
+.modal.youtrack-search-modal {
+	width: 90%;
+	max-width: 800px;
+}
+
+.youtrack-pagination-container button:not(:first-child) {
+	margin-left: 0.5em;
+}
+
+.youtrack-results-table td a {
+	cursor: pointer;
+}
+
+.youtrack-action-link {
+	display: inline-flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.youtrack-fetcher-search-button.is-loading {
+	position: relative;
+	color: transparent !important;
+}
+
+.youtrack-fetcher-search-button.is-loading::after {
 	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(0deg);
 	display: inline-block;
 	width: 1em;
 	height: 1em;
-	margin-right: 0.5em;
-	border: 2px solid currentColor;
+	border: 2px solid var(--text-on-accent);
 	border-radius: 50%;
 	border-right-color: transparent;
 	animation: youtrack-spinner 0.75s linear infinite;
 }
 
-@keyframes youtrack-spinner {
-	to {
-		transform: rotate(360deg);
-	}
+.youtrack-loading {
+	display: none;
+	text-align: center;
+	margin-top: 1rem;
+	color: var(--text-muted);
 }
