@@ -17,6 +17,10 @@ This file provides guidance to AI agents when working with code in this reposito
 - `yarn build:css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
 - `yarn version` - Bump version in manifest.json and versions.json
 
+## Tools
+
+- use `gh` to access GitHub for this project
+
 ## General guidelines
 
 - IMPORTANT: After finishing your task, make sure to run `yarn build` and fix any introduced issues.
