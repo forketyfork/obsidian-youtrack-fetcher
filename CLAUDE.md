@@ -2,7 +2,33 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
-## Build Commands
+## Development Environment
+
+This project supports two development workflows:
+
+### Just Commands (Recommended)
+
+If you're using the Nix development environment (via `nix develop` or direnv), use these Just commands:
+
+- `just` - List all available commands
+- `just clean` - Clean build artifacts and dependencies
+- `just install` - Install dependencies
+- `just build` - Full production build (includes tests, typecheck and formatting)
+- `just dev` - Development build
+- `just watch` - Development build with watch mode
+- `just prod` - Production build without tests or type checking
+- `just typecheck` - TypeScript typecheck
+- `just format` - Format code with Prettier
+- `just lint` - Check code style with ESLint
+- `just test` - Run Jest tests
+- `just test-dev` - Run development build and then tests
+- `just test-watch` - Run development build and then tests in watch mode
+- `just coverage` - Generate test coverage report
+- `just build-css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
+- `just version` - Bump version in manifest.json and versions.json
+- `just release` - Full release (version, push, tags)
+
+### Yarn Commands (Alternative)
 
 - `yarn dev` - Development build
 - `yarn dev:watch` - Development build with watch mode
@@ -19,7 +45,7 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## General guidelines
 
-- IMPORTANT: After finishing your task, make sure to run `yarn build` and fix any introduced issues.
+- IMPORTANT: After finishing your task, make sure to run `just build` (if using Nix/Just) or `yarn build` and fix any introduced issues.
 - IMPORTANT: On finishing your task, make sure the README.md file is up to date with regards to the new features, usage, and development.
 - IMPORTANT: Always try to extract testable logic that can be independent of Obsidian plugins to separate classes or functions and write unit tests for it.
 - IMPORTANT: Do not write useless tests just to increase coverage, make them actually useful for catching issues in the code.
