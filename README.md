@@ -83,6 +83,48 @@ The issue `summary` can also be used as a `${title}` placeholder.
 
 ## Development
 
+### Using Nix and Just (Recommended)
+
+This project includes a Nix flake and direnv configuration for reproducible development environments, along with Just commands for common tasks.
+
+#### Prerequisites
+
+- [Nix](https://nixos.org/download.html) with flakes enabled
+- [direnv](https://direnv.net/) (optional but recommended)
+
+#### Setup
+
+1. Clone the repository and enter the directory
+2. If using direnv, run `direnv allow` to automatically load the development environment
+3. If not using direnv, run `nix develop` to enter the development shell
+
+#### Available Commands
+
+```shell
+# List all available commands
+just
+
+# Clean build artifacts
+just clean
+
+# Install dependencies
+just install
+
+# Full production build (includes tests, type checking, and formatting)
+just build
+
+# Development build with watch mode
+just watch
+
+# Run tests
+just test
+
+# Run linter
+just lint
+```
+
+### Using Yarn Directly
+
 Run the development build with change watch:
 
 ```shell
