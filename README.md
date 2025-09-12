@@ -49,7 +49,7 @@ This Obsidian plugin allows you to quickly fetch YouTrack issues and create note
 
 Alternatively, you can use the "Search YouTrack issues" command to open a search modal. Here you can enter a YouTrack query to search for issues. The results are paginated, and you can import any issue from the list.
 
-[TODO: Add screenshot of the search modal]
+![search](images/search.png "Search issues")
 
 ## Note Format
 
