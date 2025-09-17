@@ -183,20 +183,25 @@ export default class YouTrackSearchModal extends Modal {
 		for (const issue of this.issues) {
 			const row = tbody.createEl("tr");
 
-			const issueLink = row.createEl("td").createEl("a", {
+			const idCell = row.createEl("td");
+			idCell.setAttr("data-label", "ID");
+			const issueLink = idCell.createEl("a", {
 				text: issue.idReadable,
 				href: `${this.plugin.settings.youtrackUrl}/issue/${issue.idReadable}`,
 			});
 			issueLink.setAttr("target", "_blank");
 
-			row.createEl("td", { text: issue.summary });
+			const summaryCell = row.createEl("td", { text: issue.summary });
+			summaryCell.setAttr("data-label", "Summary");
 
 			const stateField = issue.customFields.find(
 				field => field.name.toLowerCase() === "state" || field.name.toLowerCase() === "status"
 			);
-			row.createEl("td", { text: stateField?.value?.name ?? "N/A" });
+			const statusCell = row.createEl("td", { text: stateField?.value?.name ?? "N/A" });
+			statusCell.setAttr("data-label", "Status");
 
 			const actionCell = row.createEl("td");
+			actionCell.setAttr("data-label", "Action");
 
 			const existingFile = this.getExistingFile(issue.idReadable);
 			if (existingFile) {
