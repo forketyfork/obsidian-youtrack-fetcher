@@ -43,6 +43,10 @@ If you're using the Nix development environment (via `nix develop` or direnv), u
 - `yarn build:css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
 - `yarn version` - Bump version in manifest.json and versions.json
 
+## Tools
+
+- use `gh` to access GitHub for this project
+
 ## General guidelines
 
 - IMPORTANT: After finishing your task, make sure to run `just build` (if using Nix/Just) or `yarn build` and fix any introduced issues.
