@@ -3000,9 +3000,9 @@ nwsapi@^2.2.16:
   integrity sha512-/ieB+mDe4MrrKMT8z+mQL8klXydZWGR5Dowt4RAGKbJ3kIGEx3X4ljUo+6V73IXtUPWgfOlU5B9MlGxFO5T+cA==
 
 obsidian@latest:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.10.0.tgz#ef7770d4757e713389c395e026bbeae1f38597c5"
-  integrity sha512-F7hhnmGRQD1TanDPFT//LD3iKNUVd7N8sKL7flCCHRszfTxpDJ39j3T7LHbcGpyid906i6lD5oO+cnfLBzJMKw==
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.10.2.tgz#58ec74def7773adaec4aa3fb74622115bdcf6cc4"
+  integrity sha512-bX03YCHf06OTzI/D+QK71ajCPCmwr/cjxzlVXjQa10DjK5iHRWhtJJpp83arSCyayFMp23u+UHcY7hxcEx2Mvg==
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"
