@@ -296,10 +296,10 @@
   dependencies:
     "@marijn/find-cluster-break" "^1.0.0"
 
-"@codemirror/view@^6.39.2":
-  version "6.39.2"
-  resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-6.39.2.tgz#a384f4f46cddec771a6494ddd4f9baa14b96e959"
-  integrity sha512-YCbOfs4cq49ulN/MVhrUV22rKDJv/fHUs4cR98McAI59/coVwUa2N3RAoNVDgeJNchrQzBxTT3vzto4ZbTYVtw==
+"@codemirror/view@^6.39.3":
+  version "6.39.3"
+  resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-6.39.3.tgz#fd3717ae47e8561a5849c0994de854b7624d5435"
+  integrity sha512-ZR32LYnPMpf7XZcrYJpSrHJUHNZPTj73/amTtZLhAwzYhSKiDI2OZmCiXbTRvxL1T8X7QTHnCG+KfnRJvH/QsA==
   dependencies:
     "@codemirror/state" "^6.5.0"
     crelt "^1.0.6"
@@ -2954,9 +2954,9 @@ nwsapi@^2.2.16:
   integrity sha512-/ieB+mDe4MrrKMT8z+mQL8klXydZWGR5Dowt4RAGKbJ3kIGEx3X4ljUo+6V73IXtUPWgfOlU5B9MlGxFO5T+cA==
 
 obsidian@latest:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.10.3.tgz#7fe0b117ce4afa246d67c71c166382fe3c3cb9e8"
-  integrity sha512-VP+ZSxNMG7y6Z+sU9WqLvJAskCfkFrTz2kFHWmmzis+C+4+ELjk/sazwcTHrHXNZlgCeo8YOlM6SOrAFCynNew==
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.11.0.tgz#b9a96e128980908ccacba4e25fbaeb70ec28151a"
+  integrity sha512-lVqN9AmDWHzhNATi2tDnjqVgI6WUYKeT+lIsAycAyLt4XCC6zRsWzb+tFCiB7Rn3PpttefjoovilhYwvS4Iqxw==
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"
