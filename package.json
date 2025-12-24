@@ -28,7 +28,7 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@codemirror/state": "^6.5.3",
-		"@codemirror/view": "^6.39.5",
+		"@codemirror/view": "^6.39.6",
 		"@eslint/eslintrc": "^3.3.3",
 		"@eslint/js": "^9.39.2",
 		"@types/jest": "^30.0.0",
