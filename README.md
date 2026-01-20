@@ -80,12 +80,14 @@ The issue `summary` can also be used as a `${title}` placeholder.
 
 If you have trouble fetching issues, check the following. If you're on macOS or Linux, you can use the provided curl commands in your terminal, replacing the example host, port, and token with your values.
 
-1. URL + network reachability: verify that YouTrack is accessible from your machine. 
-   
+1. URL + network reachability: verify that YouTrack is accessible from your machine.
+
    Use the exact base URL you open in a browser, including port and any additional path like `/youtrack`.
+
    ```bash
    curl -s -o /dev/null -w "%{http_code}\n" https://youtrack.company.local:8080/youtrack
    ```
+
    - `200/302/401/403` = reachable
    - `000` = can't connect (VPN/DNS/firewall/port issue)
 
@@ -102,9 +104,11 @@ If you have trouble fetching issues, check the following. If you're on macOS or 
    Then enable "Use API token authentication" in the plugin settings and paste the generated token into "API token".
 
    How to check that the token works:
+
    ```bash
    curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer <your token here>" <base URL>/api/users/me
    ```
+
    - `200` = token works
    - `401/403` = token invalid or permissions issue
 
@@ -122,6 +126,7 @@ If you have trouble fetching issues, check the following. If you're on macOS or 
      --data-urlencode "\$top=1" \
      <base URL>/api/issues
    ```
+
    - `200` = access ok
    - `403` = no permission
 
