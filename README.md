@@ -78,8 +78,54 @@ The issue `summary` can also be used as a `${title}` placeholder.
 
 ## Troubleshooting
 
-- If you have trouble authenticating, make sure your API token has proper permissions
-- For self-hosted instances, check that the REST API is accessible
+If you have trouble fetching issues, check the following. If you're on macOS or Linux, you can use the provided curl commands in your terminal, replacing the example host, port, and token with your values.
+
+1. URL + network reachability: verify that YouTrack is accessible from your machine. 
+   
+   Use the exact base URL you open in a browser, including port and any additional path like `/youtrack`.
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" https://youtrack.company.local:8080/youtrack
+   ```
+   - `200/302/401/403` = reachable
+   - `000` = can't connect (VPN/DNS/firewall/port issue)
+
+2. API token (if your instance requires authentication).
+
+   To get a token:
+   - go to your profile: <base URL>/users/me
+   - click on "Update personal information and manage logins"
+   - select "Account security"
+   - scroll down to "Tokens" and click "New token"
+   - set name and add "YouTrack" to token scope
+   - click "Create" and copy the token
+
+   Then enable "Use API token authentication" in the plugin settings and paste the generated token into "API token".
+
+   How to check that the token works:
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer <your token here>" <base URL>/api/users/me
+   ```
+   - `200` = token works
+   - `401/403` = token invalid or permissions issue
+
+3. Permissions / project access
+
+   Ensure you have access to the project. Replace <project code> in the request below with the one you expect to have access to:
+
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" \
+     -H "Accept: application/json" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer <your token here>" \
+     -G --data-urlencode "query=project: <project code>" \
+     --data-urlencode "fields=idReadable,summary" \
+     --data-urlencode "\$top=1" \
+     <base URL>/api/issues
+   ```
+   - `200` = access ok
+   - `403` = no permission
+
+If you still face problems, [create an issue](https://github.com/forketyfork/obsidian-youtrack-fetcher/issues/new). Also: in Obsidian, open View -> Toggle Developer Tools, check the Console for errors, and attach those logs to the ticket if possible.
 
 ## Development
 
