@@ -1,17 +1,17 @@
 /* YouTrack modal styling */
-.youtrack-input-container input {
+.youtrack-fetcher-input-container input {
 	width: 100%;
 	padding: 0.5rem;
 	border-radius: var(--radius-s);
 }
 
-.youtrack-modal-button-container {
+.youtrack-fetcher-modal-button-container {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 1rem;
 }
 
-.youtrack-modal-button-container button {
+.youtrack-fetcher-modal-button-container button {
 	margin-left: 0.5rem;
 	border-radius: var(--radius-s);
 }
@@ -21,101 +21,101 @@
 	margin-top: 0.5rem;
 }
 
-.youtrack-status {
+.youtrack-fetcher-status {
 	min-height: 1.5em;
 	margin-top: 0.5rem;
 }
 
-@keyframes youtrack-spinner {
+@keyframes youtrack-fetcher-spinner {
 	to {
 		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }
 
-.youtrack-search-container {
+.youtrack-fetcher-search-container {
 	display: flex;
 	align-items: center;
 	margin-bottom: 1em;
 }
 
-.youtrack-input {
+.youtrack-fetcher-input {
 	width: 100%;
 	padding: 0.5rem;
 	border-radius: var(--radius-s);
 }
 
-.youtrack-search-container .youtrack-input {
+.youtrack-fetcher-search-container .youtrack-fetcher-input {
 	flex-grow: 1;
 	margin-right: 0.5em;
 }
 
-.youtrack-pagination-container.hidden {
+.youtrack-fetcher-pagination-container.hidden {
 	display: none;
 }
 
-.youtrack-pagination-container {
+.youtrack-fetcher-pagination-container {
 	display: flex;
 	justify-content: center;
 	margin-bottom: 1em;
 }
 
-.youtrack-results-table {
+.youtrack-fetcher-results-table {
 	width: 100%;
 	margin-top: 1em;
 	table-layout: fixed;
 }
 
-.youtrack-results-container {
+.youtrack-fetcher-results-container {
 	height: 300px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 
-.youtrack-page-display {
+.youtrack-fetcher-page-display {
 	margin: 0 0.5em;
 	display: flex;
 	align-items: center;
 }
 
-.youtrack-results-table th,
-.youtrack-results-table td {
+.youtrack-fetcher-results-table th,
+.youtrack-fetcher-results-table td {
 	padding: 0.5em;
 	text-align: left;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 }
 
-.youtrack-results-table th:nth-child(1),
-.youtrack-results-table td:nth-child(1) {
+.youtrack-fetcher-results-table th:nth-child(1),
+.youtrack-fetcher-results-table td:nth-child(1) {
 	width: 15%;
 	min-width: 80px;
 }
 
-.youtrack-results-table th:nth-child(2),
-.youtrack-results-table td:nth-child(2) {
+.youtrack-fetcher-results-table th:nth-child(2),
+.youtrack-fetcher-results-table td:nth-child(2) {
 	width: 50%;
 }
 
-.youtrack-results-table th:nth-child(3),
-.youtrack-results-table td:nth-child(3) {
+.youtrack-fetcher-results-table th:nth-child(3),
+.youtrack-fetcher-results-table td:nth-child(3) {
 	width: 20%;
 	min-width: 60px;
 }
 
-.youtrack-results-table th:nth-child(4),
-.youtrack-results-table td:nth-child(4) {
+.youtrack-fetcher-results-table th:nth-child(4),
+.youtrack-fetcher-results-table td:nth-child(4) {
 	width: 15%;
 	min-width: 50px;
 	text-align: center;
 }
 
 @media (max-width: 600px) {
-	.youtrack-results-table {
+	.youtrack-fetcher-results-table {
 		display: block;
 		border: none;
 	}
 
-	.youtrack-results-table thead {
+	.youtrack-fetcher-results-table thead {
 		position: absolute;
 		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
@@ -124,11 +124,11 @@
 		overflow: hidden;
 	}
 
-	.youtrack-results-table tbody {
+	.youtrack-fetcher-results-table tbody {
 		display: block;
 	}
 
-	.youtrack-results-table tr {
+	.youtrack-fetcher-results-table tr {
 		display: block;
 		margin-bottom: 1em;
 		padding: 0.5em;
@@ -137,7 +137,7 @@
 		background: var(--background-secondary);
 	}
 
-	.youtrack-results-table td {
+	.youtrack-fetcher-results-table td {
 		display: block;
 		padding: 0.125em 0;
 		border: none;
@@ -146,13 +146,13 @@
 		min-width: unset !important;
 	}
 
-	.youtrack-results-table td:nth-child(1),
-	.youtrack-results-table td:nth-child(2) {
+	.youtrack-fetcher-results-table td:nth-child(1),
+	.youtrack-fetcher-results-table td:nth-child(2) {
 		padding-left: 0;
 	}
 
-	.youtrack-results-table td:before {
-		content: attr(data-label);
+	.youtrack-fetcher-results-table td:before {
+		content: attr(data-youtrack-fetcher-label);
 		font-weight: var(--font-weight);
 		color: var(--text-muted);
 		display: inline-block;
@@ -160,13 +160,13 @@
 		margin-right: 0.5em;
 	}
 
-	.youtrack-results-table td:nth-child(1):before,
-	.youtrack-results-table td:nth-child(2):before {
+	.youtrack-fetcher-results-table td:nth-child(1):before,
+	.youtrack-fetcher-results-table td:nth-child(2):before {
 		display: none;
 	}
 
-	.youtrack-results-table td:nth-child(3),
-	.youtrack-results-table td:nth-child(4) {
+	.youtrack-fetcher-results-table td:nth-child(3),
+	.youtrack-fetcher-results-table td:nth-child(4) {
 		display: flex;
 		align-items: center;
 		margin-top: 0.25em;
@@ -174,17 +174,17 @@
 		border-top: 1px solid var(--background-modifier-border);
 	}
 
-	.youtrack-results-table td:nth-child(3):before,
-	.youtrack-results-table td:nth-child(4):before {
+	.youtrack-fetcher-results-table td:nth-child(3):before,
+	.youtrack-fetcher-results-table td:nth-child(4):before {
 		flex-shrink: 0;
 	}
 
-	.youtrack-results-table td:nth-child(4) {
+	.youtrack-fetcher-results-table td:nth-child(4) {
 		justify-content: center;
 	}
 
-	.youtrack-results-table td:nth-child(4) button,
-	.youtrack-results-table td:nth-child(4) a {
+	.youtrack-fetcher-results-table td:nth-child(4) button,
+	.youtrack-fetcher-results-table td:nth-child(4) a {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -193,27 +193,27 @@
 	}
 }
 
-.youtrack-help-button {
+.youtrack-fetcher-help-button {
 	margin-left: 0.5em;
 	display: flex;
 	align-items: center;
 	color: var(--text-muted);
 }
 
-.modal.youtrack-search-modal {
+.modal.youtrack-fetcher-search-modal {
 	width: 90%;
 	max-width: 800px;
 }
 
-.youtrack-pagination-container button:not(:first-child) {
+.youtrack-fetcher-pagination-container button:not(:first-child) {
 	margin-left: 0.5em;
 }
 
-.youtrack-results-table td a {
+.youtrack-fetcher-results-table td a {
 	cursor: pointer;
 }
 
-.youtrack-action-link {
+.youtrack-fetcher-action-link {
 	display: inline-flex;
 	justify-content: center;
 	width: 100%;
@@ -236,10 +236,10 @@
 	border: 2px solid var(--text-on-accent);
 	border-radius: 50%;
 	border-right-color: transparent;
-	animation: youtrack-spinner 0.75s linear infinite;
+	animation: youtrack-fetcher-spinner 0.75s linear infinite;
 }
 
-.youtrack-loading {
+.youtrack-fetcher-loading {
 	display: none;
 	text-align: center;
 	margin-top: 1rem;
