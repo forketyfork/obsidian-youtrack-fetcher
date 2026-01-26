@@ -27,8 +27,11 @@ If you're using the Nix development environment (via `nix develop` or direnv), u
 - `just build-css` - Minify CSS with CSSO (from src/styles.src.css to styles.css)
 - `just version` - Bump version in manifest.json and versions.json
 - `just release` - Full release (version, push, tags)
+- `just tag-release` - Tag release (after release command)
 
 ### Yarn Commands (Alternative)
+
+## Build Commands
 
 - `yarn dev` - Development build
 - `yarn dev:watch` - Development build with watch mode
@@ -50,6 +53,7 @@ If you're using the Nix development environment (via `nix develop` or direnv), u
 ## General guidelines
 
 - IMPORTANT: After finishing your task, make sure to run `just build` (if using Nix/Just) or `yarn build` and fix any introduced issues.
+- IMPORTANT: ALWAYS commit the results of `yarn build` before finalizing a task.
 - IMPORTANT: On finishing your task, make sure the README.md file is up to date with regards to the new features, usage, and development.
 - IMPORTANT: Always try to extract testable logic that can be independent of Obsidian plugins to separate classes or functions and write unit tests for it.
 - IMPORTANT: Do not write useless tests just to increase coverage, make them actually useful for catching issues in the code.
@@ -86,6 +90,7 @@ If you're using the Nix development environment (via `nix develop` or direnv), u
 - All CSS classes should have the prefix `youtrack-fetcher-`.
 - All user data attributes should start with `data-youtrack-fetcher-`
 - Do not overwrite Obsidian core styling, always use custom classes or data attributes.
+- **Avoid inline styles**: Never assign styles via JavaScript (`element.style.x = y`) or inline HTML style attributes. Move all styles to CSS so themes and snippets can adapt them.
 
 ## Obsidian API Best Practices
 
@@ -101,3 +106,9 @@ If you're using the Nix development environment (via `nix develop` or direnv), u
 - **User input**: When letting users select files or folders, provide an `AbstractInputSuggest` for type-ahead support
 - **Type safety**: Always validate and coerce types from frontmatter and user input (e.g., `String(value)` for frontmatter fields that might not be strings)
 - **Component pattern**: Extend `Component` class for plugin sub-components to ensure proper cleanup and lifecycle management
+- **CodeMirror extensions**: When implementing editor decorations, consider updating on viewport change (not just document change) so decorations appear as the user scrolls through large files
+
+## Plugin Submission Guidelines
+
+- **Don't use "Obsidian" in plugin name or description**: The word "Obsidian" is reserved for first-party products
+- **manifest.json**: Don't add `"main": "main.js"` entry - it's not a valid manifest field and will be flagged during review

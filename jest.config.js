@@ -10,5 +10,5 @@ module.exports = {
 	},
 	coverageProvider: "v8",
 	coverageDirectory: "coverage",
-	collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts", "!src/__tests__/**", "!node_modules/**"],
+	collectCoverageFrom: ["**/*.ts", "!**/*.test.ts", "!**/__tests__/**", "!node_modules/**"],
 };
