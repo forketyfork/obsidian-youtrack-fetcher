@@ -15,7 +15,7 @@ export default class YouTrackIssueModal extends Modal {
 		const { contentEl } = this;
 		contentEl.createEl("h2", { text: "Fetch YouTrack issue" });
 
-		const inputContainer = contentEl.createDiv({ cls: "youtrack-input-container" });
+		const inputContainer = contentEl.createDiv({ cls: "youtrack-fetcher-input-container" });
 		const input = new TextComponent(inputContainer)
 			.setPlaceholder("Issue URL or ID (e.g., ABC-123)")
 			.setValue(this.issueId || "")
@@ -25,12 +25,12 @@ export default class YouTrackIssueModal extends Modal {
 					this.statusEl.setText("");
 				}
 			});
-		input.inputEl.addClass("youtrack-input");
+		input.inputEl.addClass("youtrack-fetcher-input");
 
-		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
+		this.statusEl = contentEl.createEl("p", { cls: "youtrack-fetcher-status" });
 
 		this.loadingIndicator = contentEl.createEl("div", {
-			cls: "youtrack-loading",
+			cls: "youtrack-fetcher-loading",
 			text: "Fetching issue...",
 		});
 
@@ -40,7 +40,7 @@ export default class YouTrackIssueModal extends Modal {
 		}, 0);
 
 		const buttonsContainer = contentEl.createDiv({
-			cls: "youtrack-modal-button-container",
+			cls: "youtrack-fetcher-modal-button-container",
 		});
 
 		buttonsContainer.createEl("button", { text: "Cancel" }).addEventListener("click", () => {

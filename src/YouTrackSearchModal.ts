@@ -34,16 +34,16 @@ export default class YouTrackSearchModal extends Modal {
 	}
 
 	onOpen() {
-		this.modalEl.addClass("youtrack-search-modal");
+		this.modalEl.addClass("youtrack-fetcher-search-modal");
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.createEl("h2", { text: "Search YouTrack issues" });
 
-		const searchContainer = contentEl.createDiv({ cls: "youtrack-search-container" });
+		const searchContainer = contentEl.createDiv({ cls: "youtrack-fetcher-search-container" });
 		const searchInput = new TextComponent(searchContainer)
 			.setPlaceholder("Enter YouTrack query")
 			.onChange(value => (this.query = value));
-		searchInput.inputEl.addClass("youtrack-input");
+		searchInput.inputEl.addClass("youtrack-fetcher-input");
 		new QuerySuggest(this.plugin, searchInput.inputEl);
 		// Store event handlers for cleanup
 		this.keyPressHandler = e => {
@@ -64,29 +64,29 @@ export default class YouTrackSearchModal extends Modal {
 		this.searchButtonEl.addEventListener("click", this.searchClickHandler);
 
 		const helpButton = searchContainer.createEl("a", {
-			cls: "youtrack-help-button",
+			cls: "youtrack-fetcher-help-button",
 			href: "https://www.jetbrains.com/help/youtrack/server/sample-search-queries.html",
 		});
 		helpButton.setAttr("target", "_blank");
 		setIcon(helpButton, "help-circle");
 
-		const paginationContainer = contentEl.createDiv({ cls: "youtrack-pagination-container hidden" });
+		const paginationContainer = contentEl.createDiv({ cls: "youtrack-fetcher-pagination-container hidden" });
 		this.firstButtonEl = paginationContainer.createEl("button");
 		setIcon(this.firstButtonEl, "chevrons-left");
 		this.prevButtonEl = paginationContainer.createEl("button");
 		setIcon(this.prevButtonEl, "chevron-left");
 
-		this.pageDisplayEl = paginationContainer.createSpan({ cls: "youtrack-page-display" });
+		this.pageDisplayEl = paginationContainer.createSpan({ cls: "youtrack-fetcher-page-display" });
 
 		this.nextButtonEl = paginationContainer.createEl("button");
 		setIcon(this.nextButtonEl, "chevron-right");
 		this.lastButtonEl = paginationContainer.createEl("button");
 		setIcon(this.lastButtonEl, "chevrons-right");
 
-		this.firstButtonEl.addClass("youtrack-first-button");
-		this.prevButtonEl.addClass("youtrack-prev-button");
-		this.nextButtonEl.addClass("youtrack-next-button");
-		this.lastButtonEl.addClass("youtrack-last-button");
+		this.firstButtonEl.addClass("youtrack-fetcher-first-button");
+		this.prevButtonEl.addClass("youtrack-fetcher-prev-button");
+		this.nextButtonEl.addClass("youtrack-fetcher-next-button");
+		this.lastButtonEl.addClass("youtrack-fetcher-last-button");
 
 		// Store event handlers for cleanup
 		this.firstClickHandler = () => {
@@ -107,8 +107,8 @@ export default class YouTrackSearchModal extends Modal {
 		this.nextButtonEl.addEventListener("click", this.nextClickHandler);
 		this.lastButtonEl.addEventListener("click", this.lastClickHandler);
 
-		this.resultsEl = contentEl.createDiv({ cls: "youtrack-results-container" });
-		this.statusEl = contentEl.createEl("p", { cls: "youtrack-status" });
+		this.resultsEl = contentEl.createDiv({ cls: "youtrack-fetcher-results-container" });
+		this.statusEl = contentEl.createEl("p", { cls: "youtrack-fetcher-status" });
 	}
 
 	private async search(isNewSearch = false) {
@@ -134,7 +134,7 @@ export default class YouTrackSearchModal extends Modal {
 				this.totalIssues = await this.plugin.getIssuesCount(this.query);
 				this.statusEl.setText("");
 				// Show pagination container only after we have the total count
-				const paginationContainer = this.contentEl.querySelector(".youtrack-pagination-container");
+				const paginationContainer = this.contentEl.querySelector(".youtrack-fetcher-pagination-container");
 				paginationContainer?.classList.remove("hidden");
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : String(error);
@@ -171,7 +171,7 @@ export default class YouTrackSearchModal extends Modal {
 			return;
 		}
 
-		const table = this.resultsEl.createEl("table", { cls: "youtrack-results-table" });
+		const table = this.resultsEl.createEl("table", { cls: "youtrack-fetcher-results-table" });
 		const thead = table.createEl("thead");
 		const headerRow = thead.createEl("tr");
 		headerRow.createEl("th", { text: "ID" });
@@ -184,7 +184,7 @@ export default class YouTrackSearchModal extends Modal {
 			const row = tbody.createEl("tr");
 
 			const idCell = row.createEl("td");
-			idCell.setAttr("data-label", "ID");
+			idCell.setAttr("data-youtrack-fetcher-label", "ID");
 			const issueLink = idCell.createEl("a", {
 				text: issue.idReadable,
 				href: `${this.plugin.settings.youtrackUrl}/issue/${issue.idReadable}`,
@@ -192,20 +192,20 @@ export default class YouTrackSearchModal extends Modal {
 			issueLink.setAttr("target", "_blank");
 
 			const summaryCell = row.createEl("td", { text: issue.summary });
-			summaryCell.setAttr("data-label", "Summary");
+			summaryCell.setAttr("data-youtrack-fetcher-label", "Summary");
 
 			const stateField = issue.customFields.find(
 				field => field.name.toLowerCase() === "state" || field.name.toLowerCase() === "status"
 			);
 			const statusCell = row.createEl("td", { text: stateField?.value?.name ?? "N/A" });
-			statusCell.setAttr("data-label", "Status");
+			statusCell.setAttr("data-youtrack-fetcher-label", "Status");
 
 			const actionCell = row.createEl("td");
-			actionCell.setAttr("data-label", "Action");
+			actionCell.setAttr("data-youtrack-fetcher-label", "Action");
 
 			const existingFile = this.getExistingFile(issue.idReadable);
 			if (existingFile) {
-				const actionLink = actionCell.createEl("a", { cls: "youtrack-action-link" });
+				const actionLink = actionCell.createEl("a", { cls: "youtrack-fetcher-action-link" });
 				setIcon(actionLink, "share");
 				actionLink.addEventListener("click", () => {
 					void this.app.workspace.getLeaf().openFile(existingFile);
@@ -263,7 +263,7 @@ export default class YouTrackSearchModal extends Modal {
 
 	onClose() {
 		// Remove event listeners to prevent memory leaks
-		const searchInput = this.contentEl.querySelector(".youtrack-input") as HTMLInputElement;
+		const searchInput = this.contentEl.querySelector(".youtrack-fetcher-input") as HTMLInputElement;
 		if (searchInput && this.keyPressHandler) {
 			searchInput.removeEventListener("keypress", this.keyPressHandler);
 		}
