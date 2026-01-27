@@ -225,6 +225,12 @@ and publish a new tag:
 yarn release
 ```
 
+## My other plugins
+
+- [Food Tracker](https://github.com/forketyfork/obsidian-food-tracker): Track calories, macros, and nutrition totals with database and inline entries.
+- [Grazie Plugin](https://github.com/forketyfork/obsidian-grazie-plugin): Grammar and spell checking powered by JetBrains AI Platform (in development).
+- [Speech Bubbles](https://github.com/forketyfork/obsidian-speech-bubbles): Render transcript notes as chat-style speech bubbles.
+
 ## License
 
 This plugin is licensed under the MIT License.
