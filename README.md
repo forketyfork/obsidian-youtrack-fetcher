@@ -222,7 +222,7 @@ Bump the version in `package.json` and `manifest.json`, push the `main` branch,
 and publish a new tag:
 
 ```shell
-yarn release
+yarn release -- <strategy|version>
 ```
 
 ## My other plugins
