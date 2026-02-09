@@ -394,7 +394,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/state@npm:^6.5.0, @codemirror/state@npm:^6.5.4":
+"@codemirror/state@npm:6.5.0":
+  version: 6.5.0
+  resolution: "@codemirror/state@npm:6.5.0"
+  dependencies:
+    "@marijn/find-cluster-break": "npm:^1.0.0"
+  checksum: 10c0/740425d605d7b12524e3abef242a8ca0ea1a17bab97f7583221f89c56b8f2eb236f8a227885e2bb472662b328d2a32b972fbf8543096224711679dfc3a28b492
+  languageName: node
+  linkType: hard
+
+"@codemirror/state@npm:^6.5.0":
   version: 6.5.4
   resolution: "@codemirror/state@npm:6.5.4"
   dependencies:
@@ -403,15 +412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.39.13":
-  version: 6.39.13
-  resolution: "@codemirror/view@npm:6.39.13"
+"@codemirror/view@npm:6.38.6":
+  version: 6.38.6
+  resolution: "@codemirror/view@npm:6.38.6"
   dependencies:
     "@codemirror/state": "npm:^6.5.0"
     crelt: "npm:^1.0.6"
     style-mod: "npm:^4.1.0"
     w3c-keyname: "npm:^2.2.4"
-  checksum: 10c0/63002b5cf43aee71c366ac3220700166f47bd1e6b294204855c22c187fc781df05fd57fdac1bc118d6e6add484e33886817283ce3328682c1b4ef8936b0223bc
+  checksum: 10c0/7faa6558a991faf8acb6a74dbe5e21b6e1a83f8ace7ec7b37e8250c4e1e9f152c40978588cf2d2609c8ad7126e05ce9cae052bf345232630c300d27ccfb87493
   languageName: node
   linkType: hard
 
@@ -4128,8 +4137,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "obsidian-youtrack-fetcher@workspace:."
   dependencies:
-    "@codemirror/state": "npm:^6.5.4"
-    "@codemirror/view": "npm:^6.39.13"
+    "@codemirror/state": "npm:6.5.0"
+    "@codemirror/view": "npm:6.38.6"
     "@eslint/js": "npm:^10.0.1"
     "@types/jest": "npm:^30.0.0"
     "@types/lodash": "npm:^4.17.23"
