@@ -32,7 +32,7 @@
 	},
 	"devDependencies": {
 		"@codemirror/state": "6.5.4",
-		"@codemirror/view": "6.39.15",
+		"@codemirror/view": "6.39.16",
 		"@eslint/js": "^10.0.1",
 		"@eslint/json": "1.0.1",
 		"@types/jest": "^30.0.0",
