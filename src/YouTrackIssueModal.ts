@@ -2,9 +2,9 @@ import { App, Modal, TextComponent, normalizePath } from "obsidian";
 import type YouTrackPlugin from "./YouTrackPlugin";
 export default class YouTrackIssueModal extends Modal {
 	plugin: YouTrackPlugin;
-	issueId: string;
-	statusEl: HTMLElement;
-	loadingIndicator: HTMLElement;
+	issueId = "";
+	statusEl!: HTMLElement;
+	loadingIndicator!: HTMLElement;
 
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);
