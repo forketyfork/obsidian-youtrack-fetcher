@@ -6,7 +6,7 @@ export class FolderSuggest extends AbstractInputSuggest<TFolder> {
 		const folders: TFolder[] = [];
 		const lowerCaseInputStr = inputStr.toLowerCase();
 
-		abstractFiles.forEach((file: TFolder) => {
+		abstractFiles.forEach(file => {
 			if (file instanceof TFolder && file.path.toLowerCase().contains(lowerCaseInputStr)) {
 				folders.push(file);
 			}

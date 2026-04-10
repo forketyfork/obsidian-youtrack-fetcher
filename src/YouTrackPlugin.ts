@@ -25,7 +25,7 @@ interface DateTimeFormatOptions {
 }
 
 export default class YouTrackPlugin extends Plugin {
-	settings: YouTrackPluginSettings;
+	settings!: YouTrackPluginSettings;
 	dateTimeOptions: DateTimeFormatOptions = {
 		locale: undefined, // Uses system locale by default
 		timeZone: undefined, // Uses system time zone by default
@@ -230,7 +230,8 @@ export default class YouTrackPlugin extends Plugin {
 			return await response.json;
 		} catch (error) {
 			console.error("Error searching YouTrack issues:", error);
-			new Notice(`Failed to search issues: ${error}`);
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			new Notice(`Failed to search issues: ${errorMessage}`);
 			throw error;
 		}
 	}

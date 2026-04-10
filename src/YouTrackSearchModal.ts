@@ -5,27 +5,27 @@ import { QuerySuggest } from "./QuerySuggest";
 
 export default class YouTrackSearchModal extends Modal {
 	plugin: YouTrackPlugin;
-	private query: string;
+	private query = "";
 	private issues: YouTrackIssue[] = [];
 	private page = 0;
 	private readonly pageSize: number;
 	private totalIssues = 0;
-	private resultsEl: HTMLElement;
-	private statusEl: HTMLElement;
-	private searchButtonEl: HTMLButtonElement;
-	private firstButtonEl: HTMLButtonElement;
-	private prevButtonEl: HTMLButtonElement;
-	private nextButtonEl: HTMLButtonElement;
-	private lastButtonEl: HTMLButtonElement;
-	private pageDisplayEl: HTMLSpanElement;
+	private resultsEl!: HTMLElement;
+	private statusEl!: HTMLElement;
+	private searchButtonEl!: HTMLButtonElement;
+	private firstButtonEl!: HTMLButtonElement;
+	private prevButtonEl!: HTMLButtonElement;
+	private nextButtonEl!: HTMLButtonElement;
+	private lastButtonEl!: HTMLButtonElement;
+	private pageDisplayEl!: HTMLSpanElement;
 
 	// Event listeners for cleanup
-	private keyPressHandler: (e: KeyboardEvent) => void;
-	private searchClickHandler: () => void;
-	private firstClickHandler: () => void;
-	private prevClickHandler: () => void;
-	private nextClickHandler: () => void;
-	private lastClickHandler: () => void;
+	private keyPressHandler!: (e: KeyboardEvent) => void;
+	private searchClickHandler!: () => void;
+	private firstClickHandler!: () => void;
+	private prevClickHandler!: () => void;
+	private nextClickHandler!: () => void;
+	private lastClickHandler!: () => void;
 
 	constructor(app: App, plugin: YouTrackPlugin) {
 		super(app);

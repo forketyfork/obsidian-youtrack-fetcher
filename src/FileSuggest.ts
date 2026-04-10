@@ -6,7 +6,7 @@ export class FileSuggest extends AbstractInputSuggest<TFile> {
 		const files: TFile[] = [];
 		const lowerCaseInputStr = inputStr.toLowerCase();
 
-		abstractFiles.forEach((file: TFile) => {
+		abstractFiles.forEach(file => {
 			if (file instanceof TFile && file.path.toLowerCase().contains(lowerCaseInputStr)) {
 				files.push(file);
 			}
