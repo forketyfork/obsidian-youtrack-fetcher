@@ -3,7 +3,7 @@
 	"name": "YouTrack Fetcher",
 	"version": "0.11.1",
 	"author": "Forketyfork",
-	"minAppVersion": "0.15.0",
+	"minAppVersion": "1.4.10",
 	"description": "Fetches YouTrack issues into notes.",
 	"authorUrl": "https://github.com/forketyfork",
 	"isDesktopOnly": false
