@@ -16,7 +16,7 @@ export default class YouTrackSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("YouTrack URL")
-			.setDesc("URL of your YouTrack installation (e.g., HTTPS://youtrack.jetbrains.com)")
+			.setDesc("URL of your YouTrack installation (e.g., https://youtrack.jetbrains.com)")
 			.addText(text =>
 				text.setValue(this.plugin.settings.youtrackUrl).onChange(async value => {
 					this.plugin.settings.youtrackUrl = value.replace(/\/$/, "");

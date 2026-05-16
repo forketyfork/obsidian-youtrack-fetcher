@@ -1,5 +1,4 @@
 import { Plugin, TFile, normalizePath, requestUrl, Notice } from "obsidian";
-import _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
 import YouTrackSearchModal from "./YouTrackSearchModal";
@@ -22,6 +21,15 @@ const TIMESTAMP_FIELDS = new Set(["created", "updated", "resolved"]);
 interface DateTimeFormatOptions {
 	locale?: string;
 	timeZone?: string;
+}
+
+function resolveTemplatePath(data: Record<string, unknown>, path: string): unknown {
+	return path.split(".").reduce<unknown>((cur, key) => {
+		if (cur && typeof cur === "object") {
+			return (cur as Record<string, unknown>)[key.trim()];
+		}
+		return undefined;
+	}, data);
 }
 
 export default class YouTrackPlugin extends Plugin {
@@ -340,9 +348,13 @@ export default class YouTrackPlugin extends Plugin {
 			}
 		}
 
-		// Use lodash template with ${...} syntax
-		const compiled = _.template(template);
-		return compiled(replacements);
+		return template.replace(/\$\{([^}]+)\}/g, (_match, expr: string) => {
+			const value = resolveTemplatePath(replacements, expr.trim());
+			if (typeof value === "string") return value;
+			if (typeof value === "number" || typeof value === "boolean") return String(value);
+			if (value != null && typeof value === "object") return JSON.stringify(value);
+			return "";
+		});
 	}
 
 	async createIssueNote(issueId: string, issueData: Record<string, unknown>, template: string, fields: string[]) {
