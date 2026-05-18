@@ -1,5 +1,4 @@
 import { Plugin, TFile, normalizePath, requestUrl, Notice } from "obsidian";
-import _ from "lodash";
 import YouTrackSettingTab from "./YouTrackSettingTab";
 import YouTrackIssueModal from "./YouTrackIssueModal";
 import YouTrackSearchModal from "./YouTrackSearchModal";
@@ -24,8 +23,19 @@ interface DateTimeFormatOptions {
 	timeZone?: string;
 }
 
+function resolveTemplatePath(data: Record<string, unknown>, path: string): unknown {
+	return path.split(".").reduce<unknown>((cur, key) => {
+		if (cur && typeof cur === "object") {
+			return (cur as Record<string, unknown>)[key.trim()];
+		}
+		return undefined;
+	}, data);
+}
+
 export default class YouTrackPlugin extends Plugin {
 	settings!: YouTrackPluginSettings;
+	issuesCountPollMaxAttempts = 20;
+	issuesCountPollDelayMs = 500;
 	dateTimeOptions: DateTimeFormatOptions = {
 		locale: undefined, // Uses system locale by default
 		timeZone: undefined, // Uses system time zone by default
@@ -252,20 +262,29 @@ export default class YouTrackPlugin extends Plugin {
 			headers["Authorization"] = `Bearer ${this.settings.apiToken}`;
 		}
 
+		// The count endpoint returns -1 while YouTrack computes the count
+		// asynchronously on the server. Poll until we get a real value.
 		try {
-			const response = await requestUrl({
-				url: apiUrl,
-				method: "POST",
-				headers,
-				body: JSON.stringify({ query }),
-			});
+			for (let attempt = 0; attempt < this.issuesCountPollMaxAttempts; attempt++) {
+				const response = await requestUrl({
+					url: apiUrl,
+					method: "POST",
+					headers,
+					body: JSON.stringify({ query }),
+				});
 
-			if (response.status !== 200) {
-				throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+				if (response.status !== 200) {
+					throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+				}
+
+				const data = (await response.json) as { count: number };
+				if (data.count >= 0) return data.count;
+
+				if (attempt < this.issuesCountPollMaxAttempts - 1) {
+					await new Promise<void>(resolve => window.setTimeout(resolve, this.issuesCountPollDelayMs));
+				}
 			}
-
-			const data = (await response.json) as { count: number };
-			return data.count;
+			throw new Error("Timed out waiting for YouTrack to compute the issue count");
 		} catch (error) {
 			console.error("Error getting YouTrack issues count:", error);
 			throw error;
@@ -340,9 +359,13 @@ export default class YouTrackPlugin extends Plugin {
 			}
 		}
 
-		// Use lodash template with ${...} syntax
-		const compiled = _.template(template);
-		return compiled(replacements);
+		return template.replace(/\$\{([^}]+)\}/g, (_match, expr: string) => {
+			const value = resolveTemplatePath(replacements, expr.trim());
+			if (typeof value === "string") return value;
+			if (typeof value === "number" || typeof value === "boolean") return String(value);
+			if (value != null && typeof value === "object") return JSON.stringify(value);
+			return "";
+		});
 	}
 
 	async createIssueNote(issueId: string, issueData: Record<string, unknown>, template: string, fields: string[]) {

@@ -87,5 +87,34 @@ describe("YouTrackPlugin", () => {
 				"Error getting issues count: Internal Server Error (500)"
 			);
 		});
+
+		it("should poll while YouTrack returns -1 and resolve when the count is ready", async () => {
+			plugin.issuesCountPollDelayMs = 0;
+			(requestUrl as jest.Mock).mockReset();
+			(requestUrl as jest.Mock)
+				.mockResolvedValueOnce({ status: 200, json: Promise.resolve({ count: -1 }) })
+				.mockResolvedValueOnce({ status: 200, json: Promise.resolve({ count: -1 }) })
+				.mockResolvedValueOnce({ status: 200, json: Promise.resolve({ count: 137 }) });
+
+			const result = await plugin.getIssuesCount("fresh filter");
+
+			expect(result).toBe(137);
+			expect(requestUrl).toHaveBeenCalledTimes(3);
+		});
+
+		it("should fail with a timeout error if the count stays -1", async () => {
+			plugin.issuesCountPollDelayMs = 0;
+			plugin.issuesCountPollMaxAttempts = 4;
+			(requestUrl as jest.Mock).mockReset();
+			(requestUrl as jest.Mock).mockResolvedValue({
+				status: 200,
+				json: Promise.resolve({ count: -1 }),
+			});
+
+			await expect(plugin.getIssuesCount("stuck filter")).rejects.toThrow(
+				"Timed out waiting for YouTrack to compute the issue count"
+			);
+			expect(requestUrl).toHaveBeenCalledTimes(4);
+		});
 	});
 });
