@@ -1,7 +1,6 @@
 {
 	"extends": ["stylelint-config-standard"],
 	"rules": {
-		"declaration-no-important": true,
-		"media-feature-range-notation": "prefix"
+		"declaration-no-important": true
 	}
 }

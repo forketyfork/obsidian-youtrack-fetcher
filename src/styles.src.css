@@ -107,7 +107,7 @@
 	text-align: center;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
 	.youtrack-fetcher-results-table {
 		display: block;
 		border: none;
