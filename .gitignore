@@ -37,3 +37,6 @@ coverage/
 
 # architect
 .architect
+
+# Temporary files
+.tmp
