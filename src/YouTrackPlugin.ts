@@ -34,6 +34,8 @@ function resolveTemplatePath(data: Record<string, unknown>, path: string): unkno
 
 export default class YouTrackPlugin extends Plugin {
 	settings!: YouTrackPluginSettings;
+	issuesCountPollMaxAttempts = 20;
+	issuesCountPollDelayMs = 500;
 	dateTimeOptions: DateTimeFormatOptions = {
 		locale: undefined, // Uses system locale by default
 		timeZone: undefined, // Uses system time zone by default
@@ -260,20 +262,29 @@ export default class YouTrackPlugin extends Plugin {
 			headers["Authorization"] = `Bearer ${this.settings.apiToken}`;
 		}
 
+		// The count endpoint returns -1 while YouTrack computes the count
+		// asynchronously on the server. Poll until we get a real value.
 		try {
-			const response = await requestUrl({
-				url: apiUrl,
-				method: "POST",
-				headers,
-				body: JSON.stringify({ query }),
-			});
+			for (let attempt = 0; attempt < this.issuesCountPollMaxAttempts; attempt++) {
+				const response = await requestUrl({
+					url: apiUrl,
+					method: "POST",
+					headers,
+					body: JSON.stringify({ query }),
+				});
 
-			if (response.status !== 200) {
-				throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+				if (response.status !== 200) {
+					throw new Error(`Error getting issues count: ${response.text} (${response.status})`);
+				}
+
+				const data = (await response.json) as { count: number };
+				if (data.count >= 0) return data.count;
+
+				if (attempt < this.issuesCountPollMaxAttempts - 1) {
+					await new Promise<void>(resolve => window.setTimeout(resolve, this.issuesCountPollDelayMs));
+				}
 			}
-
-			const data = (await response.json) as { count: number };
-			return data.count;
+			throw new Error("Timed out waiting for YouTrack to compute the issue count");
 		} catch (error) {
 			console.error("Error getting YouTrack issues count:", error);
 			throw error;
