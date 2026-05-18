@@ -172,6 +172,9 @@ just test
 
 # Run linter
 just lint
+
+# Run the CSS linter
+just lint-css
 ```
 
 ### Using Yarn Directly
@@ -192,6 +195,12 @@ Run the linter:
 
 ```shell
 yarn lint
+```
+
+Run the CSS linter:
+
+```shell
+yarn lint:css
 ```
 
 Run the tests:

@@ -67,8 +67,7 @@
 
 .youtrack-fetcher-results-container {
 	height: 300px;
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow: hidden auto;
 }
 
 .youtrack-fetcher-page-display {
@@ -81,7 +80,6 @@
 .youtrack-fetcher-results-table td {
 	padding: 0.5em;
 	text-align: left;
-	word-wrap: break-word;
 	overflow-wrap: break-word;
 }
 
@@ -109,7 +107,7 @@
 	text-align: center;
 }
 
-@media (max-width: 600px) {
+@media (width <= 600px) {
 	.youtrack-fetcher-results-table {
 		display: block;
 		border: none;
@@ -117,7 +115,6 @@
 
 	.youtrack-fetcher-results-table thead {
 		position: absolute;
-		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
 		width: 1px;
 		height: 1px;
@@ -142,8 +139,14 @@
 		padding: 0.125em 0;
 		border: none;
 		text-align: left;
-		width: 100% !important;
-		min-width: unset !important;
+	}
+
+	.youtrack-fetcher-results-table td:nth-child(1),
+	.youtrack-fetcher-results-table td:nth-child(2),
+	.youtrack-fetcher-results-table td:nth-child(3),
+	.youtrack-fetcher-results-table td:nth-child(4) {
+		width: 100%;
+		min-width: unset;
 	}
 
 	.youtrack-fetcher-results-table td:nth-child(1),
@@ -151,7 +154,7 @@
 		padding-left: 0;
 	}
 
-	.youtrack-fetcher-results-table td:before {
+	.youtrack-fetcher-results-table td::before {
 		content: attr(data-youtrack-fetcher-label);
 		font-weight: var(--font-weight);
 		color: var(--text-muted);
@@ -160,8 +163,8 @@
 		margin-right: 0.5em;
 	}
 
-	.youtrack-fetcher-results-table td:nth-child(1):before,
-	.youtrack-fetcher-results-table td:nth-child(2):before {
+	.youtrack-fetcher-results-table td:nth-child(1)::before,
+	.youtrack-fetcher-results-table td:nth-child(2)::before {
 		display: none;
 	}
 
@@ -174,8 +177,8 @@
 		border-top: 1px solid var(--background-modifier-border);
 	}
 
-	.youtrack-fetcher-results-table td:nth-child(3):before,
-	.youtrack-fetcher-results-table td:nth-child(4):before {
+	.youtrack-fetcher-results-table td:nth-child(3)::before,
+	.youtrack-fetcher-results-table td:nth-child(4)::before {
 		flex-shrink: 0;
 	}
 
@@ -221,7 +224,7 @@
 
 .youtrack-fetcher-search-button.is-loading {
 	position: relative;
-	color: transparent !important;
+	color: transparent;
 }
 
 .youtrack-fetcher-search-button.is-loading::after {

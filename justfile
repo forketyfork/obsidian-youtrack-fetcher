@@ -55,6 +55,10 @@ coverage:
 lint:
     yarn lint
 
+# Run Stylelint on CSS sources
+lint-css:
+    yarn lint:css
+
 # Format code with Prettier
 format:
     yarn format
