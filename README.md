@@ -177,61 +177,61 @@ just lint
 just lint-css
 ```
 
-### Using Yarn Directly
+### Using pnpm Directly
 
 Run the development build with change watch:
 
 ```shell
-yarn dev:watch
+pnpm dev:watch
 ```
 
 Run the TypeScript type check:
 
 ```shell
-yarn typecheck
+pnpm typecheck
 ```
 
 Run the linter:
 
 ```shell
-yarn lint
+pnpm lint
 ```
 
 Run the CSS linter:
 
 ```shell
-yarn lint:css
+pnpm lint:css
 ```
 
 Run the tests:
 
 ```shell
-yarn test
+pnpm test
 ```
 
 Run the tests in watch mode:
 
 ```shell
-yarn test:watch
+pnpm test:watch
 ```
 
 Generate a coverage report:
 
 ```shell
-yarn coverage
+pnpm coverage
 ```
 
 Run the production build (includes tests, type checking, and formatting):
 
 ```shell
-yarn build
+pnpm build
 ```
 
 Bump the version in `package.json` and `manifest.json`, push the `main` branch,
 and publish a new tag:
 
 ```shell
-yarn release -- <strategy|version>
+pnpm release -- <strategy|version>
 ```
 
 ## My other plugins
