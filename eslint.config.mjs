@@ -7,7 +7,6 @@ export default [
 	{
 		ignores: [
 			"**/node_modules/",
-			"**/.yarn/",
 			"**/main.js",
 			"src/__mocks__/**",
 			"eslint.config.mjs",
