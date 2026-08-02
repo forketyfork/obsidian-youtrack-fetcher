@@ -51,6 +51,42 @@ module.exports = {
 			};
 		}
 	},
+	ToggleComponent: class ToggleComponent {
+		constructor(containerEl) {
+			this.value = false;
+			this.changeCallback = null;
+			this.toggleEl = document.createElement("div");
+			this.toggleEl.className = "checkbox-container";
+			this.checkboxEl = document.createElement("input");
+			this.checkboxEl.type = "checkbox";
+			this.toggleEl.appendChild(this.checkboxEl);
+			this.toggleEl.addEventListener("click", () => this.onClick());
+			containerEl.appendChild(this.toggleEl);
+		}
+		getValue() {
+			return this.value;
+		}
+		setValue(value) {
+			this.value = value;
+			this.checkboxEl.checked = value;
+			this.toggleEl.classList.toggle("is-enabled", value);
+			return this;
+		}
+		setTooltip() {
+			return this;
+		}
+		setDisabled() {
+			return this;
+		}
+		onClick() {
+			this.setValue(!this.value);
+			if (this.changeCallback) this.changeCallback(this.value);
+		}
+		onChange(callback) {
+			this.changeCallback = callback;
+			return this;
+		}
+	},
 	TextComponent: class TextComponent {
 		constructor() {
 			this.inputEl = {

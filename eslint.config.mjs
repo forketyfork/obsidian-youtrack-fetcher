@@ -14,6 +14,7 @@ export default [
 			"jest.config.js",
 			"version-bump.mjs",
 			"release.mjs",
+			".tmp/**",
 		],
 	},
 

@@ -68,4 +68,25 @@ describe("YouTrackSettingTab", () => {
 		expect(checkbox?.checked).toBe(false);
 		expect(container?.classList.contains("is-enabled")).toBe(false);
 	});
+
+	test("can be switched off after being switched on", async () => {
+		const plugin = createPlugin(true);
+		const tab = new YouTrackSettingTab(plugin.app, plugin);
+		tab.containerEl = createContainer();
+
+		act(() => {
+			tab.display();
+		});
+
+		const container = tab.containerEl.querySelector(".checkbox-container");
+		expect(container?.classList.contains("is-enabled")).toBe(true);
+
+		act(() => {
+			container?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		});
+
+		expect(container?.classList.contains("is-enabled")).toBe(false);
+		await Promise.resolve();
+		expect(plugin.settings.useApiToken).toBe(false);
+	});
 });

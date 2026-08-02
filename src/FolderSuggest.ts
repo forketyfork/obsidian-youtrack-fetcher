@@ -1,6 +1,13 @@
-import { AbstractInputSuggest, TFolder } from "obsidian";
+import { App, AbstractInputSuggest, TFolder } from "obsidian";
 
 export class FolderSuggest extends AbstractInputSuggest<TFolder> {
+	constructor(
+		app: App,
+		private inputEl: HTMLInputElement
+	) {
+		super(app, inputEl);
+	}
+
 	getSuggestions(inputStr: string): TFolder[] {
 		const abstractFiles = this.app.vault.getAllLoadedFiles();
 		const folders: TFolder[] = [];
@@ -21,6 +28,9 @@ export class FolderSuggest extends AbstractInputSuggest<TFolder> {
 
 	selectSuggestion(file: TFolder): void {
 		this.setValue(file.path);
+		// setValue() only updates the input's DOM value; dispatch an input event so
+		// listeners (e.g. a controlled React input's onChange) learn about the change.
+		this.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
 		this.close();
 	}
 }

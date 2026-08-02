@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { App, PluginSettingTab } from "obsidian";
+import { App, PluginSettingTab, ToggleComponent } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
 import type YouTrackPlugin from "./YouTrackPlugin";
 import { FileSuggest } from "./FileSuggest";
@@ -18,6 +18,7 @@ const YouTrackSettingsComponent: React.FC<YouTrackSettingsProps> = ({ plugin }) 
 
 	const notesFolderInputRef = useRef<HTMLInputElement>(null);
 	const templatePathInputRef = useRef<HTMLInputElement>(null);
+	const apiTokenToggleContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (notesFolderInputRef.current) {
@@ -59,6 +60,14 @@ const YouTrackSettingsComponent: React.FC<YouTrackSettingsProps> = ({ plugin }) 
 		plugin.settings.useApiToken = value;
 		await saveSettings();
 	};
+
+	useEffect(() => {
+		if (apiTokenToggleContainerRef.current) {
+			new ToggleComponent(apiTokenToggleContainerRef.current)
+				.setValue(plugin.settings.useApiToken)
+				.onChange(value => void handleUseApiTokenChange(value));
+		}
+	}, [plugin.app]);
 
 	const handleApiTokenChange = async (value: string) => {
 		setApiToken(value);
@@ -139,15 +148,7 @@ const YouTrackSettingsComponent: React.FC<YouTrackSettingsProps> = ({ plugin }) 
 					<div className="setting-item-name">Use API token authentication</div>
 					<div className="setting-item-description">Enable to use a permanent API token for authentication</div>
 				</div>
-				<div className="setting-item-control">
-					<div className={`checkbox-container ${useApiToken ? "is-enabled" : ""}`}>
-						<input
-							type="checkbox"
-							checked={useApiToken}
-							onChange={e => void handleUseApiTokenChange(e.target.checked)}
-						/>
-					</div>
-				</div>
+				<div className="setting-item-control" ref={apiTokenToggleContainerRef}></div>
 			</div>
 
 			{useApiToken && (
