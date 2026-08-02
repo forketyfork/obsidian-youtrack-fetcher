@@ -2,9 +2,9 @@ import { App, TFile } from "obsidian";
 import { FileSuggest } from "../FileSuggest";
 
 jest.mock("obsidian", () => {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- jest.requireActual has no type information
 	const obsidianMock = jest.requireActual("../__mocks__/obsidian");
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- obsidianMock is untyped
 	return { ...obsidianMock };
 });
 

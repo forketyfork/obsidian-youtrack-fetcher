@@ -8,9 +8,9 @@ import { setNativeInputValue } from "../reactControlledInput";
 (window as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 jest.mock("obsidian", () => {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- jest.requireActual has no type information
 	const obsidianMock = jest.requireActual("../__mocks__/obsidian");
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- obsidianMock is untyped
 	return { ...obsidianMock };
 });
 
@@ -29,7 +29,6 @@ function createPlugin(useApiToken: boolean): YouTrackPlugin {
 }
 
 function createContainer(): HTMLElement {
-	// eslint-disable-next-line obsidianmd/prefer-active-doc -- jsdom test environment has no `activeDocument`
 	const el = document.createElement("div");
 	// Obsidian augments HTMLElement with `.empty()`; the test DOM doesn't have it.
 	(el as HTMLElement & { empty: () => void }).empty = () => {
