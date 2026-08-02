@@ -1,71 +1,27 @@
 # React Migration
 
-This document outlines the migration of the YouTrack Obsidian Plugin UI from vanilla TypeScript to React.
+This document outlines the use of React in the YouTrack Obsidian Plugin UI.
 
-## Changes Made
+## Where React is used
 
-### 1. Dependencies Added
+React is used for `YouTrackIssueModal.tsx`, the modal shown when fetching a YouTrack issue by ID or URL:
 
-- `react` and `react-dom` - Core React libraries
-- `@types/react` and `@types/react-dom` - TypeScript definitions for React
-
-### 2. Build Configuration Updated
-
-- **esbuild.config.mjs**: Added JSX support with `jsx: "automatic"` and `jsxImportSource: "react"`
-- **tsconfig.json**: Added React JSX compilation support and included `.tsx` files
-
-### 3. Components Migrated
-
-#### YouTrackIssueModal.tsx
-
-- Converted from vanilla TypeScript modal to React functional component
+- Converted from a vanilla TypeScript modal to a React functional component
 - Uses React hooks (`useState`, `useEffect`, `useRef`) for state management
-- Maintains the same functionality as the original modal
 - Improved user experience with proper focus management and loading states
 
-#### YouTrackSettingTab.tsx
+The issue modal keeps its `youtrack-fetcher-` prefixed CSS classes, per this project's CSS conventions.
 
-- Converted from Obsidian's Setting API to React component
-- Uses React state for real-time updates
-- Maintains all original settings functionality
-- Improved styling and user interface
+## Where React is not used
 
-### 4. Styling
+`YouTrackSettingTab.ts` uses Obsidian's declarative settings API (`getSettingDefinitions()`/`getControlValue()`/`setControlValue()`, available since Obsidian 1.13.0) instead of React or the classic imperative `Setting` API. Each field (YouTrack URL, notes folder, note template, API token toggle) is described as a plain data object; Obsidian renders the controls, including the native `folder`/`file` type-ahead pickers, and indexes them for the in-app settings search. The API token field has no native masked-input control, so it uses the declarative API's `render` escape hatch to fall back to the imperative `Setting`/`TextComponent` API for that one field.
 
-- The settings tab reuses Obsidian's native CSS classes (`setting-item`, `checkbox-container`, `clickable-icon`, etc.) instead of introducing custom overrides, so it stays consistent with core styling and other plugins
-- The issue modal keeps its `youtrack-fetcher-` prefixed classes, per this project's CSS conventions
+## Build Configuration
 
-### 5. Integration
-
-- React components are rendered using React 19's `createRoot` API
-- Proper cleanup with `unmount()` when components are destroyed
-- Maintains compatibility with Obsidian's plugin architecture
-- `FileSuggest`/`FolderSuggest` type-ahead inputs are wired up via refs in `useEffect`
-
-## Features Preserved
-
-All original functionality has been preserved:
-
-- Fetching YouTrack issues by ID or URL
-- Template-based note creation
-- Settings management (URL, folder, template, API token)
-- Error handling and validation
-- Keyboard shortcuts (Enter to submit)
-
-## Benefits of React Migration
-
-1. **Better State Management**: React hooks provide cleaner state management
-2. **Improved User Experience**: Better loading states, focus management, and interactions
-3. **Enhanced Maintainability**: Component-based architecture is easier to maintain
-4. **Modern Development**: Uses current web development best practices
-5. **Better Styling**: More consistent and polished user interface
+- **esbuild.config.mjs**: JSX support via `jsx: "automatic"` and `jsxImportSource: "react"`, needed for `YouTrackIssueModal.tsx`
+- **tsconfig.json**: React JSX compilation support, `.tsx` files included
 
 ## Technical Details
 
-- React components are wrapped in Obsidian Modal/PluginSettingTab classes
-- Uses React 19's `createRoot` API for rendering
-- TypeScript support maintained throughout
-- All tests continue to pass
-- Build process remains the same with additional JSX compilation
-
-The migration maintains full backward compatibility while providing a more modern and maintainable codebase.
+- `YouTrackIssueModal` is a React component wrapped in an Obsidian `Modal`, rendered with React 19's `createRoot` API and cleaned up via `unmount()` when the modal closes
+- `react`/`react-dom` remain dependencies solely for the issue modal

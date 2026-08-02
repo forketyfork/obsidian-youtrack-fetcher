@@ -73,7 +73,7 @@ The issue `summary` can also be used as a `${title}` placeholder.
 
 ## Requirements
 
-- Obsidian v1.4.10 or higher
+- Obsidian v1.13.0 or higher
 - Access to a YouTrack instance (cloud or self-hosted)
 
 ## Troubleshooting

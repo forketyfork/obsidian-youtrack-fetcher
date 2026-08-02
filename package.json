@@ -13,7 +13,7 @@
 		"test:dev": "pnpm dev && jest",
 		"test:watch": "pnpm dev && jest --watch",
 		"coverage": "pnpm dev && jest --coverage",
-		"lint": "eslint .",
+		"lint": "eslint . --max-warnings 0",
 		"lint:css": "stylelint \"src/**/*.css\"",
 		"build": "pnpm typecheck && pnpm lint && pnpm lint:css && pnpm format && pnpm prod && pnpm test",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
