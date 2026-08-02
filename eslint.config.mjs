@@ -72,13 +72,13 @@ export default [
 			"@typescript-eslint/prefer-optional-chain": "error",
 			"@typescript-eslint/no-unnecessary-type-assertion": "error",
 
-			// Recognise "YouTrack" as a brand and skip URLs from the casing check.
+			// Recognise "YouTrack" as a brand and skip URLs and issue IDs from the casing check.
 			"obsidianmd/ui/sentence-case": [
 				"error",
 				{
 					enforceCamelCaseLower: true,
 					brands: [...DEFAULT_BRANDS, "YouTrack"],
-					ignoreRegex: ["https?://[^\\s)]+"],
+					ignoreRegex: ["https?://[^\\s)]+", "\\b[A-Z][A-Z0-9]+-\\d+\\b"],
 				},
 			],
 		},
