@@ -105,8 +105,17 @@ module.exports = {
 	TFile: class TFile {},
 	TFolder: class TFolder {},
 	AbstractInputSuggest: class AbstractInputSuggest {
-		constructor() {}
-		setValue() {}
+		constructor(app, textInputEl) {
+			this.textInputEl = textInputEl;
+		}
+		setValue(value) {
+			// Mirrors real Obsidian: assigns through the plain JS property setter,
+			// which is what makes it visible to a React controlled input's value tracker.
+			this.textInputEl.value = value;
+		}
+		getValue() {
+			return this.textInputEl.value;
+		}
 		close() {}
 	},
 	normalizePath: path => path,

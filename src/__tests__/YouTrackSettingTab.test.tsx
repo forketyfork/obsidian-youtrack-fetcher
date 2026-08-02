@@ -1,7 +1,9 @@
 import { act } from "react";
-import { App } from "obsidian";
+import { App, TFolder } from "obsidian";
 import YouTrackSettingTab from "../YouTrackSettingTab";
 import type YouTrackPlugin from "../YouTrackPlugin";
+import { FolderSuggest } from "../FolderSuggest";
+import { setNativeInputValue } from "../reactControlledInput";
 
 (window as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -88,5 +90,37 @@ describe("YouTrackSettingTab", () => {
 		expect(container?.classList.contains("is-enabled")).toBe(false);
 		await Promise.resolve();
 		expect(plugin.settings.useApiToken).toBe(false);
+	});
+
+	test("persists the full autocompleted folder path, not the typed prefix", async () => {
+		const plugin = createPlugin(false);
+		const tab = new YouTrackSettingTab(plugin.app, plugin);
+		tab.containerEl = createContainer();
+
+		act(() => {
+			tab.display();
+		});
+
+		const notesFolderInput = tab.containerEl.querySelector<HTMLInputElement>('input[placeholder="YouTrack"]');
+		if (!notesFolderInput) throw new Error("Notes folder input not found");
+
+		act(() => {
+			setNativeInputValue(notesFolderInput, "YouTr");
+			notesFolderInput.dispatchEvent(new Event("input", { bubbles: true }));
+		});
+		await Promise.resolve();
+		expect(plugin.settings.notesFolder).toBe("YouTr");
+
+		const folder = new TFolder();
+		folder.path = "YouTrack";
+		const suggest = new FolderSuggest(plugin.app, notesFolderInput);
+
+		act(() => {
+			suggest.selectSuggestion(folder);
+		});
+		await Promise.resolve();
+
+		expect(notesFolderInput.value).toBe("YouTrack");
+		expect(plugin.settings.notesFolder).toBe("YouTrack");
 	});
 });

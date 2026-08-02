@@ -1,4 +1,5 @@
 import { App, AbstractInputSuggest, TFolder } from "obsidian";
+import { setNativeInputValue } from "./reactControlledInput";
 
 export class FolderSuggest extends AbstractInputSuggest<TFolder> {
 	constructor(
@@ -27,9 +28,7 @@ export class FolderSuggest extends AbstractInputSuggest<TFolder> {
 	}
 
 	selectSuggestion(file: TFolder): void {
-		this.setValue(file.path);
-		// setValue() only updates the input's DOM value; dispatch an input event so
-		// listeners (e.g. a controlled React input's onChange) learn about the change.
+		setNativeInputValue(this.inputEl, file.path);
 		this.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
 		this.close();
 	}
