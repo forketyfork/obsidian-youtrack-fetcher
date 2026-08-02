@@ -17,7 +17,6 @@ export default class YouTrackIssueModal extends Modal {
 
 		const inputContainer = contentEl.createDiv({ cls: "youtrack-fetcher-input-container" });
 		const input = new TextComponent(inputContainer)
-			// eslint-disable-next-line obsidianmd/ui/sentence-case -- ABC-123 is an example YouTrack issue id
 			.setPlaceholder("Issue URL or ID (e.g., ABC-123)")
 			.setValue(this.issueId || "")
 			.onChange(value => {

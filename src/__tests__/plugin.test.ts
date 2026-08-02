@@ -2,9 +2,9 @@ import YouTrackPlugin from "../main";
 import { App, PluginManifest, requestUrl } from "obsidian";
 
 jest.mock("obsidian", () => {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- Jest's runtime mock has no static module type
 	const obsidianMock = jest.requireActual("../__mocks__/obsidian");
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- Return the mock with Jest's runtime-provided shape
 	return {
 		...obsidianMock,
 		requestUrl: jest.fn(),
