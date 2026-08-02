@@ -140,7 +140,7 @@ const YouTrackSettingsComponent: React.FC<YouTrackSettingsProps> = ({ plugin }) 
 					<div className="setting-item-description">Enable to use a permanent API token for authentication</div>
 				</div>
 				<div className="setting-item-control">
-					<div className="checkbox-container">
+					<div className={`checkbox-container ${useApiToken ? "is-enabled" : ""}`}>
 						<input
 							type="checkbox"
 							checked={useApiToken}

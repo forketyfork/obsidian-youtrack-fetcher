@@ -86,7 +86,7 @@ export default [
 
 	// Jest globals for test files
 	{
-		files: ["src/__tests__/**/*.ts"],
+		files: ["src/__tests__/**/*.ts", "src/__tests__/**/*.tsx"],
 		languageOptions: {
 			globals: {
 				...globals.jest,
