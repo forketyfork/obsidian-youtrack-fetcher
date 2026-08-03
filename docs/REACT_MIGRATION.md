@@ -14,7 +14,7 @@ The issue modal keeps its `youtrack-fetcher-` prefixed CSS classes, per this pro
 
 ## Where React is not used
 
-`YouTrackSettingTab.ts` uses Obsidian's declarative settings API (`getSettingDefinitions()`/`getControlValue()`/`setControlValue()`, available since Obsidian 1.13.0) instead of React or the classic imperative `Setting` API. Each field (YouTrack URL, notes folder, note template, API token toggle) is described as a plain data object; Obsidian renders the controls, including the native `folder`/`file` type-ahead pickers, and indexes them for the in-app settings search. The API token field has no native masked-input control, so it uses the declarative API's `render` escape hatch to fall back to the imperative `Setting`/`TextComponent` API for that one field.
+`YouTrackSettingTab.ts` uses Obsidian's declarative settings API (`getSettingDefinitions()`, available since Obsidian 1.13.0) instead of React or the classic imperative `Setting` API. Each field (YouTrack URL, notes folder, note template, API token toggle) is described as a plain data object; Obsidian renders the controls, including the native `folder`/`file` type-ahead pickers, and indexes them for the in-app settings search. Since the control `key`s match `YouTrackPluginSettings` property names exactly, the framework's default `getControlValue()` is used as-is; `setControlValue()` is overridden to trim the YouTrack URL and persist via `saveSettings()`. The API token field has no native masked-input control, so it uses the declarative API's `render` escape hatch to fall back to the imperative `Setting`/`TextComponent` API for that one field.
 
 ## Build Configuration
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { App, Modal, normalizePath } from "obsidian";
+import { App, Modal, normalizePath, TFile } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
 import type YouTrackPlugin from "./YouTrackPlugin";
 
@@ -47,7 +47,7 @@ const YouTrackIssueModalComponent: React.FC<YouTrackIssueModalProps> = ({ plugin
 			const normalizedPath = normalizePath(plugin.settings.templatePath);
 			const file = plugin.app.vault.getAbstractFileByPath(normalizedPath);
 
-			if (!file) {
+			if (!file || !(file instanceof TFile)) {
 				showError(`Template file not found: ${normalizedPath}. Please check the template path in settings.`);
 				return;
 			}
@@ -66,7 +66,7 @@ const YouTrackIssueModalComponent: React.FC<YouTrackIssueModalProps> = ({ plugin
 	};
 
 	const handleKeyDown = (event: React.KeyboardEvent) => {
-		if (event.key === "Enter") {
+		if (event.key === "Enter" && !isLoading) {
 			fetchIssue().catch(console.error);
 		}
 	};
