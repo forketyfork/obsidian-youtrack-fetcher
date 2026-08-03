@@ -248,3 +248,7 @@
 	margin-top: 1rem;
 	color: var(--text-muted);
 }
+
+.youtrack-fetcher-loading.visible {
+	display: block;
+}

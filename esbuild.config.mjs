@@ -39,6 +39,8 @@ const sharedOptions = {
 	outfile: "main.js",
 	minify: prod,
 	keepNames: true,
+	jsx: "automatic",
+	jsxImportSource: "react",
 	banner: {
 		js: banner,
 	},

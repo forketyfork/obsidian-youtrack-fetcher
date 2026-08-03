@@ -1,4 +1,99 @@
 // Mock for Obsidian API
+
+class ToggleComponent {
+	constructor(containerEl) {
+		this.value = false;
+		this.changeCallback = null;
+		this.toggleEl = document.createElement("div");
+		this.toggleEl.className = "checkbox-container";
+		this.checkboxEl = document.createElement("input");
+		this.checkboxEl.type = "checkbox";
+		this.toggleEl.appendChild(this.checkboxEl);
+		this.toggleEl.addEventListener("click", () => this.onClick());
+		containerEl.appendChild(this.toggleEl);
+	}
+	getValue() {
+		return this.value;
+	}
+	setValue(value) {
+		this.value = value;
+		this.checkboxEl.checked = value;
+		this.toggleEl.classList.toggle("is-enabled", value);
+		return this;
+	}
+	setTooltip() {
+		return this;
+	}
+	setDisabled() {
+		return this;
+	}
+	onClick() {
+		this.setValue(!this.value);
+		if (this.changeCallback) this.changeCallback(this.value);
+	}
+	onChange(callback) {
+		this.changeCallback = callback;
+		return this;
+	}
+}
+
+class TextComponent {
+	constructor() {
+		this.inputEl = {
+			type: "text",
+			value: "",
+			placeholder: "",
+			focus: () => {},
+			select: () => {},
+			addEventListener: () => {},
+		};
+		this.changeCallback = null;
+	}
+	setPlaceholder(placeholder) {
+		this.inputEl.placeholder = placeholder;
+		return this;
+	}
+	setValue(value) {
+		this.inputEl.value = value;
+		return this;
+	}
+	getValue() {
+		return this.inputEl.value;
+	}
+	onChange(callback) {
+		this.changeCallback = callback;
+		return this;
+	}
+}
+
+class Setting {
+	constructor(containerEl) {
+		this.containerEl = containerEl ?? document.createElement("div");
+	}
+	setName() {
+		return this;
+	}
+	setDesc() {
+		return this;
+	}
+	setHeading() {
+		return this;
+	}
+	addText(cb) {
+		this.textComponent = new TextComponent();
+		cb(this.textComponent);
+		return this;
+	}
+	addToggle(cb) {
+		this.toggleComponent = new ToggleComponent(this.containerEl);
+		cb(this.toggleComponent);
+		return this;
+	}
+	addExtraButton() {
+		return this;
+	}
+}
+
 module.exports = {
 	Plugin: class Plugin {
 		constructor() {}
@@ -17,17 +112,7 @@ module.exports = {
 	PluginSettingTab: class PluginSettingTab {
 		constructor() {}
 	},
-	Setting: class Setting {
-		constructor() {
-			return {
-				setName: () => this,
-				setDesc: () => this,
-				addText: () => this,
-				addToggle: () => this,
-				addExtraButton: () => this,
-			};
-		}
-	},
+	Setting,
 	Modal: class Modal {
 		constructor() {}
 		open() {}
@@ -51,26 +136,20 @@ module.exports = {
 			};
 		}
 	},
-	TextComponent: class TextComponent {
-		constructor() {
-			this.inputEl = {
-				focus: () => {},
-				select: () => {},
-				addEventListener: () => {},
-			};
-			return {
-				setPlaceholder: () => this,
-				setValue: () => this,
-				onChange: () => this,
-				inputEl: this.inputEl,
-			};
-		}
-	},
+	ToggleComponent,
+	TextComponent,
 	TFile: class TFile {},
 	TFolder: class TFolder {},
 	AbstractInputSuggest: class AbstractInputSuggest {
-		constructor() {}
-		setValue() {}
+		constructor(app, textInputEl) {
+			this.textInputEl = textInputEl;
+		}
+		setValue(value) {
+			this.textInputEl.value = value;
+		}
+		getValue() {
+			return this.textInputEl.value;
+		}
 		close() {}
 	},
 	normalizePath: path => path,

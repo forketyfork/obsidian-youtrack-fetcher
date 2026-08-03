@@ -14,6 +14,7 @@ export default [
 			"jest.config.js",
 			"version-bump.mjs",
 			"release.mjs",
+			".tmp/**",
 		],
 	},
 
@@ -34,7 +35,7 @@ export default [
 
 	// Project-specific overrides applied on top of the recommended preset
 	{
-		files: ["**/*.ts"],
+		files: ["**/*.ts", "**/*.tsx"],
 		languageOptions: {
 			parserOptions: {
 				project: "./tsconfig.json",
@@ -86,7 +87,7 @@ export default [
 
 	// Jest globals for test files
 	{
-		files: ["src/__tests__/**/*.ts"],
+		files: ["src/__tests__/**/*.ts", "src/__tests__/**/*.tsx"],
 		languageOptions: {
 			globals: {
 				...globals.jest,

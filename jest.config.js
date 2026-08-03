@@ -5,6 +5,8 @@ const tsJestTransformCfg = createDefaultPreset().transform;
 /** @type {import("jest").Config} **/
 module.exports = {
 	testEnvironment: "jsdom",
+	modulePathIgnorePatterns: ["<rootDir>/.tmp/"],
+	setupFiles: ["<rootDir>/src/__mocks__/domPolyfills.js"],
 	transform: {
 		...Object.fromEntries(
 			Object.entries(tsJestTransformCfg).map(([pattern, transformer]) => [
