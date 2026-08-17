@@ -203,6 +203,8 @@ Run the CSS linter:
 pnpm lint:css
 ```
 
+CSS linting uses Obsidian's official Stylelint configuration and treats review warnings, including unsupported browser features, as build failures.
+
 Run the tests:
 
 ```shell

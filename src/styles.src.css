@@ -115,10 +115,11 @@
 
 	.youtrack-fetcher-results-table thead {
 		position: absolute;
-		clip-path: inset(50%);
+		left: -10000px;
 		width: 1px;
 		height: 1px;
 		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	.youtrack-fetcher-results-table tbody {
