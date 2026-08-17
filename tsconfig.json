@@ -17,13 +17,10 @@
     "lib": [
       "DOM",
       "ES6"
-    ],
-    		"jsx": "react-jsx",
-		"jsxImportSource": "react",
+		],
 		"esModuleInterop": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+		"**/*.ts"
   ]
 }

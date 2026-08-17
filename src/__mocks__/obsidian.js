@@ -96,7 +96,9 @@ class Setting {
 
 module.exports = {
 	Plugin: class Plugin {
-		constructor() {}
+		constructor(app) {
+			this.app = app;
+		}
 		loadData() {
 			return Promise.resolve({});
 		}
@@ -114,9 +116,19 @@ module.exports = {
 	},
 	Setting,
 	Modal: class Modal {
-		constructor() {}
-		open() {}
-		close() {}
+		constructor(app) {
+			this.app = app;
+			this.containerEl = document.createElement("div");
+			this.modalEl = this.containerEl.createDiv();
+			this.titleEl = this.modalEl.createDiv();
+			this.contentEl = this.modalEl.createDiv();
+		}
+		open() {
+			this.onOpen?.();
+		}
+		close() {
+			this.onClose?.();
+		}
 	},
 	App: class App {
 		constructor() {
